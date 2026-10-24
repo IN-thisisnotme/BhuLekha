@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="hi" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
+  <title>BhuLekha</title>
+
+  <!-- Offline Tailwind CSS with darkMode: 'class' -->
+  <script src="tailwind.min.js"></script>
+
+  <!-- Offline SheetJS -->
+  <script src="xlsx.full.min.js"></script>
+
+  <!-- Offline Standalone QR Code Generator -->
+  <script src="qrcode.min.js"></script>
+
+  <!-- Offline Fonts (Plus Jakarta Sans & Yantramanav) -->
+  <link rel="stylesheet" href="fonts.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Yantramanav"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+            hindi: ['"Yantramanav"', 'sans-serif']
+          },
+          colors: {
+            // Legal-Tech Eye-Friendly Modern Palette
+            slate: {
+              750: '#233044',
+              850: '#151F30',
+              900: '#0F172A',
+              950: '#0B1120'
+            },
+            navy: {
+              700: '#1E293B',
+              800: '#152033',
+              900: '#0E1726',
+              950: '#090E17'
+            },
+            emerald: {
+              50: '#ECFDF5',
+              100: '#D1FAE5',
+              200: '#A7F3D0',
+              300: '#6EE7B7',
+              400: '#34D399',
+              500: '#10B981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065F46',
+              900: '#064E3B',
+              950: '#06281E'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Immediate Dark Mode Preference Detection to avoid flash -->
+  <script>
+    (function() {
+      try {
+        window.isSystemDark = function() {
+          if (window.AndroidApp && typeof window.AndroidApp.isSystemDarkMode === 'function') {
+            try { return Boolean(window.AndroidApp.isSystemDarkMode()); } catch(e) {}
+          }
+          if (typeof window._systemIsDark === 'boolean') {
+            return window._systemIsDark;
+          }
+          return Boolean(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        };
+
+        const saved = localStorage.getItem('appThemeMode') || 'auto';
+        if (saved === 'dark' || (saved === 'auto' && window.isSystemDark())) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
+        console.error("Theme init error", e);
+      }
+    })();
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Yantramanav', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Devanagari', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    html, body {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    input, select, textarea {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Clean text scaling & layout stabilization without breaking buttons/chips */
+    h1, h2, h3, h4, p, label, div, span {
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    /* Cards that are <button> elements MUST allow multi-line text wrapping */
+    button[id^="btnDeed"], .card-btn, button div, button p, button span.text-wrap-normal {
+      white-space: normal !important;
+      word-break: normal !important;
+      overflow-wrap: break-word !important;
+    }
+
+    /* Optical language typography balance & clarity */
+    html[lang="hi"], .lang-hi {
+      font-feature-settings: "kern" 1;
+    }
+
+    /* Subheadings, paragraphs, and form labels in Hindi with comfortable line-height for matras */
+    html[lang="hi"] p, .lang-hi p,
+    html[lang="hi"] label, .lang-hi label {
+      letter-spacing: -0.01em;
+      line-height: 1.5;
+    }
+
+    /* Mobile form input readability - ensure inputs and selects are never tiny */
+    input, select, textarea {
+      font-size: 15px !important;
+    }
+    html[lang="hi"] input, html[lang="hi"] select, html[lang="hi"] textarea,
+    .lang-hi input, .lang-hi select, .lang-hi textarea {
+      font-size: 15.5px !important;
+    }
+
+    /* Standalone action buttons get crisp tracking without forcing inner paragraphs to nowrap */
+    .whitespace-nowrap, .btn-nowrap, .badge-pill, [id^="badge"], [id^="slblDeedBadge"], .chip-tag {
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* Bottom tab bar items: strict no-wrap, balanced optical height, and clear text */
+    .tab-icon-pill {
+      flex-shrink: 0;
+    }
+    .bottom-tab-active span,
+    .bottom-tab-inactive span {
+      white-space: nowrap !important;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 100%;
+      letter-spacing: -0.015em;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+    @media (min-width: 640px) {
+      .bottom-tab-active span,
+      .bottom-tab-inactive span {
+        font-size: 13px;
+      }
+    }
+
+    /* Landscape Mode Optimization: prevents squishing and bottom nav overlap on mobile phones */
+    @media (orientation: landscape) and (max-height: 550px) {
+      header {
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+      }
+      header .w-10 {
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+      }
+      #txtAppTitle {
+        font-size: 1.2rem !important;
+        line-height: 1.2 !important;
+      }
+      #txtAppTitleInfo {
+        font-size: 0.8rem !important;
+      }
+      main {
+        padding-top: 10px !important;
+        padding-bottom: 80px !important;
+      }
+      nav {
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+      }
+      .tab-icon-pill {
+        width: 2.75rem !important;
+        height: 1.75rem !important;
+      }
+      .tab-icon-pill svg {
+        width: 1.15rem !important;
+        height: 1.15rem !important;
+      }
+      .bottom-tab-active span,
+      .bottom-tab-inactive span {
+        font-size: 11.5px !important;
+        margin-top: 2px !important;
+      }
+    }
+
+    /* Ensure modals don't overflow screen vertically in landscape mode */
+    #modalClearConfirm > div, #modalSettingsConfirm > div {
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    /* Eye-Friendly Legal-Tech Dark Mode Palette Refinement */
+    .dark body {
+      background-color: #0A101D;
+    }
+    .dark header {
+      background-color: rgba(10, 16, 29, 0.95);
+      border-color: rgba(30, 41, 59, 0.9);
+    }
+    .dark nav {
+      background-color: rgba(14, 23, 38, 0.96);
+      border-color: rgba(30, 41, 59, 0.9);
+    }
+
+    /* ======================================================== */
+    /* PRINT-SPECIFIC CSS (A4 Optimized, B&W Ink Friendly)      */
+    /* ======================================================== */
+    @page {
+      size: A4 portrait;
+      /* Optimized margins with left binding gutter (24mm) for filing & hole punch */
+      margin: 14mm 12mm 14mm 24mm;
+    }
+
+    @media print {
+      /* Force pure white background, disable shadows, and eliminate all dark mode */
+      *, *::before, *::after {
+        background-color: #FFFFFF !important;
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        filter: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html, body {
+        background-color: #FFFFFF !important;
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 12pt !important;
+        line-height: 1.5 !important;
+      }
+
+      /* Hide interactive app navigation, top bar, toasts, buttons, file inputs */
+      header,
+      nav,
+      #toastContainer,
+      #btnThemeToggle,
+      .no-print,
+      button,
+      input,
+      select,
+      #viewCalc,
+      #viewSettings,
+      #viewImport,
+      #viewHistory,
+      #sectionExportActions {
+        display: none !important;
+      }
+
+      /* Clean page structure for result report */
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      #viewResult {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        space-y: 0 !important;
+      }
+
+      /* Increase base font size for all text elements in print layout */
+      p, span, td, th, div, label {
+        font-size: 12pt !important;
+        line-height: 1.45 !important;
+        color: #000000 !important;
+      }
+
+      h1 {
+        font-size: 20pt !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+        color: #000000 !important;
+      }
+
+      h2 {
+        font-size: 16pt !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+        color: #000000 !important;
+      }
+
+      h3 {
+        font-size: 14pt !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        color: #000000 !important;
+      }
+
+      .text-xs, .text-sm, .text-\[11px\], .text-\[10px\] {
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+      }
+
+      #displayGrandTotal {
+        font-size: 26pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+      }
+
+      /* Remove document filename or unnecessary header noise from printed page */
+      #txtAppTitle, #txtAppTitleInfo, .print-hide-filename {
+        display: none !important;
+      }
+
+      /* Crisp black borders for all sections with zero toner waste */
+      #viewResult section {
+        background-color: #FFFFFF !important;
+        background: #FFFFFF !important;
+        border: 1.5pt solid #0F172A !important;
+        border-radius: 8pt !important;
+        padding: 12pt !important;
+        margin-bottom: 14pt !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      /* Hero section rendered with light background and crisp black border */
+      #viewResult section[class*="bg-gradient"] {
+        background: #FFFFFF !important;
+        border: 2pt solid #000000 !important;
+      }
+
+      #viewResult section[class*="bg-gradient"] * {
+        color: #000000 !important;
+      }
+
+      #viewResult section[class*="bg-gradient"] .grid > div {
+        background: #F8FAFC !important;
+        border: 1pt solid #CBD5E1 !important;
+        border-radius: 6pt !important;
+      }
+
+      /* Itemized breakdown rows */
+      #itemizedBreakdownList > div {
+        border-bottom: 1pt solid #CBD5E1 !important;
+        padding: 8pt 0 !important;
+      }
+    }
+
+  </style>
+</head>
+<body class="bg-[#F8FAFC] dark:bg-[#0B1120] text-[#1E293B] dark:text-[#F1F5F9] min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+  <!-- Floating Toast Notifications -->
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center pointer-events-none space-y-2 w-11/12 max-w-sm"></div>
+
+  <!-- ========================================== -->
+  <!-- TOP APP BAR / BRAND HEADER                 -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#0B1120]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/90 shadow-xs transition-colors">
+    <div class="max-w-3xl mx-auto px-3.5 py-2.5 flex items-center justify-between gap-3">
+      <!-- Legal-Tech Logo & Title -->
+      <div class="flex items-center space-x-3 min-w-0 flex-1">
+        <div class="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center border border-emerald-400/30 shadow-sm shadow-emerald-600/25 shrink-0">
+          <img src="ic_legal_tech.svg" alt="Legal Tech Emblem" class="w-full h-full object-contain p-0.5" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display:none;" class="w-full h-full items-center justify-center text-white font-black text-sm">UK</div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <h1 id="txtAppTitle" class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight truncate">
+            BhuLekha
+          </h1>
+          <p id="txtAppTitleInfo" class="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 font-bold tracking-tight truncate mt-0.5">
+            सर्किल दर व मूल्यांकन
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Action Controls (Theme Toggle) -->
+      <div class="flex items-center shrink-0">
+        <!-- Quick Dark/Light Toggle -->
+        <button 
+          type="button" 
+          id="btnThemeToggle" 
+          onclick="toggleThemeMode()" 
+          title="थीम बदलें"
+          class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800 text-slate-700 dark:text-amber-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition-colors shadow-2xs cursor-pointer"
+        >
+          <!-- Sun icon (shown in dark mode) -->
+          <svg id="iconSun" class="w-4 h-4 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg id="iconMoon" class="w-4 h-4 block dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- MAIN SCROLLABLE CONTENT                    -->
+  <!-- ========================================== -->
+  <main class="flex-1 max-w-3xl w-full mx-auto p-3.5 sm:p-5 pb-36 sm:pb-40 space-y-4 sm:space-y-5">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: VALUATION TAB (CONTINUOUS SCROLL)  -->
+    <!-- ========================================== -->
+    <div id="viewCalc" class="space-y-4 sm:space-y-5">
+
+      <!-- ========================================================== -->
+      <!-- STEP 0: TRANSACTION & DEED TYPE SELECTION (TOP-LEVEL FIRST)-->
+      <!-- ========================================================== -->
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700/80 p-4 sm:p-5 shadow-xs space-y-4 transition-colors">
+        <div class="flex items-start justify-between gap-2.5 sm:gap-4 border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="flex items-start space-x-2.5 min-w-0 flex-1">
+            <span class="w-7 h-7 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 mt-0.5">0</span>
+            <div class="min-w-0 flex-1">
+              <h2 id="lblDeedStepHeader" class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
+                विलेख / संव्यवहार प्रकार
+              </h2>
+              <p id="lblDeedStepSub" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                मूल्यांकन एवं स्टाम्प/निबंधन नियमों हेतु प्राथमिक विलेख चुनें
+              </p>
+            </div>
+          </div>
+          <span id="badgeCurrentDeed" class="text-xs bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 font-bold px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap mt-0.5">
+            विक्रय विलेख
+          </span>
+        </div>
+
+        <!-- 3 Primary Deed Type Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <!-- Option 1: Sale Deed -->
+          <button 
+            type="button" 
+            id="btnDeedSale" 
+            onclick="setDeedType('sale')" 
+            class="h-full min-h-[96px] p-3.5 rounded-xl border-2 text-left transition-all relative flex flex-col justify-between whitespace-normal border-emerald-500 dark:border-emerald-400 bg-emerald-50/70 dark:bg-emerald-500/10 text-slate-900 dark:text-white shadow-xs ring-2 ring-emerald-500/20 cursor-pointer"
+          >
+            <div class="w-full">
+              <div class="flex items-center justify-between mb-1">
+                <span id="slblDeedType0" class="text-sm sm:text-base font-extrabold">विक्रय विलेख</span>
+                <span id="slblDeedBadge0" class="text-[11px] sm:text-xs font-black tracking-tight px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300">विक्रय</span>
+              </div>
+              <p id="slblDeedType0_" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-1 break-words whitespace-normal">
+                मानक स्टाम्प 5% (पुरुष), 3.75% (महिला), 4.375% (संयुक्त) • निबंधन 2% (अधिकतम ₹50,000)
+              </p>
+            </div>
+          </button>
+
+          <!-- Option 2: Family Gift Deed -->
+          <button 
+            type="button" 
+            id="btnDeedGift" 
+            onclick="setDeedType('gift')" 
+            class="h-full min-h-[96px] p-3.5 rounded-xl border-2 text-left transition-all relative flex flex-col justify-between whitespace-normal border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 cursor-pointer"
+          >
+            <div class="w-full">
+              <div class="flex items-center justify-between mb-1">
+                <span id="slblDeedType1" class="text-sm sm:text-base font-extrabold">दान विलेख</span>
+                <span id="slblDeedBadge1" class="text-[11px] sm:text-xs font-black tracking-tight px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 bg-purple-100 dark:bg-purple-900/60 text-purple-900 dark:text-purple-200">1% / 5%</span>
+              </div>
+              <p id="slblDeedType1_" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-1 break-words whitespace-normal">
+                रक्त सम्बन्धी / परिवार में 1% रियायती स्टाम्प शुल्क • अन्य में 5% • निबंधन शुल्क अधिकतम ₹50,000
+              </p>
+            </div>
+          </button>
+
+          <!-- Option 3: Lease Deed -->
+          <button 
+            type="button" 
+            id="btnDeedLease" 
+            onclick="setDeedType('lease')" 
+            class="h-full min-h-[96px] p-3.5 rounded-xl border-2 text-left transition-all relative flex flex-col justify-between whitespace-normal border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 cursor-pointer"
+          >
+            <div class="w-full">
+              <div class="flex items-center justify-between mb-1">
+                <span id="slblDeedType2" class="text-sm sm:text-base font-extrabold">पट्टा विलेख</span>
+                <span id="slblDeedBadge2" class="text-[11px] sm:text-xs font-black tracking-tight px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 bg-blue-100 dark:bg-blue-900/60 text-blue-900 dark:text-blue-200">नियम 1–8</span>
+              </div>
+              <p id="slblDeedType2_" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-1 break-words whitespace-normal">
+                अवधि आधारित दर (2% से 5%) • वार्षिक किराया/प्रीमियम/बाजार मूल्य • निबंधन शुल्क अधिकतम ₹50,000
+              </p>
+            </div>
+          </button>
+        </div>
+
+        <!-- ================================================== -->
+        <!-- SUB-PANEL: FAMILY GIFT DEED OPTIONS (WHEN GIFT CHOSEN) -->
+        <!-- ================================================== -->
+        <div id="panelGiftOptions" class="hidden p-3.5 bg-purple-50/60 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-xl space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-200/60 dark:border-purple-800/60 pb-2">
+            <div>
+              <h3 id="lblGiftRelationTitle" class="text-xs sm:text-sm font-bold text-purple-950 dark:text-purple-200">
+                दान विलेख श्रेणी:
+              </h3>
+              <p id="lblGiftRelationTitleInfo" class="text-[11px] text-purple-800 dark:text-purple-300">
+                रक्त सम्बन्धी के पक्ष में 1% स्टाम्प शुल्क मान्य है
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <label id="lblGiftType0" class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-purple-300 dark:border-purple-700 bg-white dark:bg-slate-800 cursor-pointer">
+              <input type="radio" name="giftRelation" value="family" checked onchange="onGiftRelationChange()" class="w-4 h-4 text-purple-600 focus:ring-purple-500" />
+              <div>
+                <span id="slblGiftType0" class="font-extrabold text-slate-900 dark:text-slate-100">रक्त सम्बन्धी / परिवार</span>
+                <p id="slblGiftType0info" class="text-[11px] text-purple-700 dark:text-purple-300">रियायती स्टाम्प शुल्क: कुल मूल्य का 1%</p>
+              </div>
+            </label>
+
+            <label id="lblGiftType1" class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 cursor-pointer">
+              <input type="radio" name="giftRelation" value="general" onchange="onGiftRelationChange()" class="w-4 h-4 text-purple-600 focus:ring-purple-500" />
+              <div>
+                <span id="slblGiftType1" class="font-bold text-slate-800 dark:text-slate-200">अन्य व्यक्ति / गैर-पारिवारिक</span>
+                <p id="slblGiftType1info" class="text-[11px] text-slate-500 dark:text-slate-400">सामान्य स्टाम्प शुल्क: कुल मूल्य का 5%</p>
+              </div>
+            </label>
+          </div>
+
+          <div id="lblGiftFamilyMembers" class="text-[11px] text-purple-900 dark:text-purple-300 bg-white/70 dark:bg-slate-900/60 p-2.5 rounded-lg border border-purple-200 dark:border-purple-800/80 leading-relaxed">
+            • <strong>मान्य पारिवारिक सदस्य:</strong> पिता, माता, पति, पत्नी, पुत्र, पुत्री, पुत्रवधू, भाई, अविवाहित बहन, पौत्र, पौत्री। निबंधन शुल्क 2% (अधिकतम सीमा ₹50,000)।
+          </div>
+        </div>
+
+        <!-- ================================================== -->
+        <!-- SUB-PANEL: LEASE DEED CALCULATION INPUTS (WHEN LEASE CHOSEN) -->
+        <!-- ================================================== -->
+        <div id="panelLeaseOptions" class="hidden p-4 bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-200/70 dark:border-blue-800/70 pb-2.5">
+            <div>
+              <h3 id="lblLeaseConfigHeader" class="text-xs sm:text-sm font-bold text-blue-950 dark:text-blue-200">
+                पट्टा विलेख आगणन पैरामीटर्स:
+              </h3>
+              <p id="lblLeaseConfigSubHeader" class="text-[11px] text-blue-800 dark:text-blue-300">
+                पट्टा अनुसूची अनुसार गणना
+              </p>
+            </div>
+          </div>
+
+          <!-- Quick Term Category Buttons -->
+          <div>
+            <label id="lblLeaseTermCat" class="block text-xs font-bold text-blue-950 dark:text-blue-200 mb-1.5">
+              पट्टा अवधि श्रेणी
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+              <button type="button" id="btnLeaseTerm1" onclick="setLeaseTermPreset(1)" class="w-full h-12 px-2 py-1 rounded-xl border border-blue-600 bg-blue-600 text-white font-bold text-center shadow-xs transition-all flex items-center justify-center text-xs sm:text-sm leading-tight">
+                ≤ 1 वर्ष
+              </button>
+              <button type="button" id="btnLeaseTerm2" onclick="setLeaseTermPreset(5)" class="w-full h-12 px-2 py-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-center hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all flex items-center justify-center text-xs sm:text-sm leading-tight">
+                1 से 5 वर्ष
+              </button>
+              <button type="button" id="btnLeaseTerm3" onclick="setLeaseTermPreset(10)" class="w-full h-12 px-2 py-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-center hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all flex items-center justify-center text-xs sm:text-sm leading-tight">
+                5 से 10 वर्ष
+              </button>
+              <button type="button" id="btnLeaseTerm4" onclick="setLeaseTermPreset(20)" class="w-full h-12 px-2 py-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-center hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all flex items-center justify-center text-xs sm:text-sm leading-tight">
+                10 से 20 वर्ष
+              </button>
+              <button type="button" id="btnLeaseTerm5" onclick="setLeaseTermPreset(30)" class="w-full h-12 px-2 py-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-center hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all flex items-center justify-center text-xs sm:text-sm leading-tight">
+                20 से 30 वर्ष
+              </button>
+              <button type="button" id="btnLeaseTerm6" onclick="setLeaseTermPreset(50)" class="w-full h-12 px-2 py-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-center hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all flex items-center justify-center text-xs sm:text-sm leading-tight">
+                > 30 वर्ष / शाश्वत
+              </button>
+            </div>
+          </div>
+
+          <!-- Numerical Inputs: Term, AAR, Premium, Property Value -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <!-- Lease Duration in Years with Mini Slider -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label id="lblLeaseTermYear" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  पट्टा अवधि (वर्ष में):
+                </label>
+                <div class="flex items-center space-x-1.5">
+                  <span id="lblLeaseSelected" class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">चयनित:</span>
+                  <span id="lblLeaseSliderValue" class="text-xs font-black text-blue-700 dark:text-blue-300 font-mono bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800">1 वर्ष</span>
+                </div>
+              </div>
+
+              <input 
+                id="inputLeaseYears" 
+                type="number" 
+                value="1" 
+                min="0.1" 
+                max="999" 
+                step="0.5" 
+                oninput="onLeaseYearsInput(this.value)"
+                class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+              />
+
+              <!-- Mini Slider for fast adjustment -->
+              <div class="pt-1 flex items-center space-x-2">
+                <span id="lblLeaseSliderMin" class="text-[10px] text-slate-400 font-mono">0.5</span>
+                <input 
+                  id="sliderLeaseYears" 
+                  type="range" 
+                  min="0.5" 
+                  max="50" 
+                  step="0.5" 
+                  value="1" 
+                  oninput="onLeaseSliderChange(this.value)" 
+                  class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  title="स्लाइडर से त्वरित अवधि सेट करें (0.5 - 50 वर्ष)"
+                />
+                <span id="lblLeaseSliderMax" class="text-[10px] text-slate-400 font-mono">50+</span>
+              </div>
+            </div>
+
+            <!-- Start to End Date Option to Auto-Compute Lease Term -->
+            <div class="p-2.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/20 space-y-2">
+              <div class="flex items-center justify-between">
+                <span id="lblDateRange" class="text-xs font-bold text-blue-950 dark:text-blue-200 flex items-center space-x-1.5">
+                  <span id="lblDateRangeIcon">📅</span>
+                  <span id="lblDateRangeText">दिनांक सीमा</span>
+                </span>
+
+                <button id="lblDateReset" type="button" onclick="clearLeaseDates()" class="text-[10px] text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 underline font-medium">
+                  रीसेट
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label id="lblInputLeaseStartDate" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">
+                    प्रारम्भ तिथि:
+                  </label>
+                  <input 
+                    type="date" 
+                    id="inputLeaseStartDate" 
+                    oninput="calculateTermFromDates()" 
+                    onchange="calculateTermFromDates()" 
+                    class="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label id="lblInputLeaseEndDate" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">
+                    समाप्ति तिथि:
+                  </label>
+                  <input 
+                    type="date" 
+                    id="inputLeaseEndDate" 
+                    oninput="calculateTermFromDates()" 
+                    onchange="calculateTermFromDates()" 
+                    class="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div id="lblLeaseDateDiff" class="text-[11px] text-blue-800 dark:text-blue-300 font-medium">
+                तिथि चुनें ➔ अवधि स्वतः वर्ष में सेट होगी
+              </div>
+            </div>
+
+            <!-- Consideration Mode -->
+            <div>
+              <label id="lblLeaseMode" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                कन्सिडरेशन प्रकार:
+              </label>
+              <select id="selLeaseMode" onchange="recalculate()" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                <option id="optLeaseModeBoth" value="both">किराया + पेशगी / प्रीमियम</option>
+                <option id="optLeaseModeRentOnly" value="rent_only">केवल किराया</option>
+                <option id="optLeaseModePremiumOnly" value="premium_only">केवल पेशगी / प्रीमियम</option>
+              </select>
+            </div>
+
+            <!-- Annual Average Rent (AAR) -->
+            <div id="divLeaseAar">
+              <label id="lblLeaseAar" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                औसत वार्षिक किराया (₹):
+              </label>
+              <input 
+                id="inputLeaseAar" 
+                type="number" 
+                value="120000" 
+                min="0" 
+                step="1000" 
+                oninput="recalculate()"
+                class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+              />
+            </div>
+
+            <!-- Fine/Premium/Advance -->
+            <div id="divLeasePremium">
+              <label id="lblLeasePremium" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                प्रीमियम / पेशगी राशि (₹):
+              </label>
+              <input 
+                id="inputLeasePremium" 
+                type="number" 
+                value="0" 
+                min="0" 
+                step="1000" 
+                oninput="recalculate()"
+                class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 font-sans"
+              />
+            </div>
+          </div>
+
+          <!-- Property Market Value (Auto-linked to circle rate calculation) -->
+          <div class="p-3 bg-white/80 dark:bg-slate-900/80 rounded-xl border border-blue-200 dark:border-blue-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span id="lblLeaseMarketValue" class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                सर्किल रेट आधारित कुल बाजार मूल्य:
+              </span>
+              <p id="lblLeaseMarketValueSub" class="text-[11px] text-slate-500 dark:text-slate-400">
+                दीर्घकालिक पट्टे (>30 वर्ष) हेतु आधार मूल्य
+              </p>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <span id="lblLeaseSyncedMarketVal" class="text-base font-black text-emerald-700 dark:text-emerald-400 font-sans">₹ 0</span>
+              <span id="lblLeaseAutoLinked" class="text-[10px] bg-emerald-100 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200 px-2 py-0.5 rounded font-bold">स्वतः लिंक</span>
+            </div>
+          </div>
+
+          <!-- Special Rule Clauses -->
+          <div class="space-y-2 pt-1">
+            <label class="flex items-center space-x-2.5 text-xs text-slate-800 dark:text-slate-200 cursor-pointer">
+              <input id="chkLeaseFlatUnder5" type="checkbox" onchange="recalculate()" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500" />
+              <span id="lblLeaseFlatUnder5">
+                <strong>फ्लैट / भवन पट्टा 5 वर्ष तक:</strong> कुल किराया+प्रीमियम पर 2% (न्यूनतम ₹100, अधिकतम ₹10,000)
+              </span>
+            </label>
+
+            <label class="flex items-center space-x-2.5 text-xs text-slate-800 dark:text-slate-200 cursor-pointer">
+              <input id="chkLeasePriorAgreementStamped" type="checkbox" onchange="recalculate()" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500" />
+              <span id="lblLeasePriorAgreementStamped">
+                <strong>अनुबंध पर पूर्व में पूर्ण स्टाम्प शुल्क प्रदत्त:</strong> अंतिम पट्टे पर अधिकतम ₹50 स्टाम्प शुल्क देय
+              </span>
+            </label>
+          </div>
+
+          <!-- Mandatory Institutional Exemption Notice -->
+          <div id="divInstitutionalExemption" class="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-[11px] text-amber-950 dark:text-amber-200 leading-relaxed">
+            <div class="font-black flex items-center space-x-1 mb-0.5 text-amber-900 dark:text-amber-300">
+              <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 01-1-1V6a1 1 0 011-1 1 1 0 011 1v3a1 1 0 01-1 1 1 1 0 01-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span id="lblInstitutionalExemptionTitle">विशेष सांविधिक टिप्पणी:</span>
+            </div>
+            <p id="lblInstitutionalExemptionText">
+              सर्किल दरें उन हस्तांतरणों/पट्टों पर लागू नहीं होती हैं जिनमें उत्तर प्रदेश वित्त निगम, उत्तर प्रदेश आवास एवं विकास बोर्ड, विकास प्राधिकरण, सिडकुल, जिला उद्योग केंद्र या राज्य निगम द्वारा प्रतिफल मूल्य सीधे संस्थाओं द्वारा निर्धारित किया जाता है।
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 1: LOCATION SELECTION              -->
+      <!-- ========================================== -->
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div class="flex items-start justify-between gap-2.5 sm:gap-4 border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="flex items-start space-x-2.5 min-w-0 flex-1">
+            <span class="w-7 h-7 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 mt-0.5">1</span>
+            <div class="min-w-0 flex-1">
+              <h2 id="lblLocationHeader" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                जनपद, तहसील एवं गाँव चयन
+              </h2>
+              <p id="lblLocationSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">सर्किल दर तालिका निर्धारण हेतु स्थान चुनें</p>
+            </div>
+          </div>
+          <span id="lblTotalVillages" class="text-[11px] sm:text-xs bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shrink-0 whitespace-nowrap mt-0.5">
+            0 गाँव उपलब्ध
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <!-- District -->
+          <div>
+            <label id="lblDistrictTitle" class="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-1.5">
+              जनपद:
+            </label>
+            <select id="districtSelect" onchange="onDistrictChange()" class="w-full px-3.5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-base font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- जनपद चुनें --</option>
+            </select>
+          </div>
+          <!-- Tehsil -->
+          <div>
+            <label id="lblTehsilTitle" class="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-1.5">
+              तहसील:
+            </label>
+            <select id="tehsilSelect" onchange="onTehsilChange()" class="w-full px-3.5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-base font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- तहसील चुनें --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Village Search & Dropdown -->
+        <div class="space-y-2">
+          <label id="lblVillageTitle" class="block text-sm font-bold text-slate-800 dark:text-slate-200">
+            गाँव अथवा वार्ड:
+          </label>
+          <div class="relative">
+            <input 
+              id="villageSearchInput" 
+              type="text" 
+              placeholder="गाँव अथवा वार्ड का नाम खोजें..." 
+              oninput="filterVillageList()"
+              onkeydown="handleVillageSearchKey(event)"
+              class="w-full pl-9 pr-8 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-base font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <button 
+              type="button" 
+              id="btnClearVillageSearch" 
+              onclick="clearVillageSearch()" 
+              title="खोज साफ़ करें"
+              class="absolute right-2.5 top-3 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 rounded-md text-xs font-bold transition-colors hidden"
+            >✕</button>
+          </div>
+          <select id="villageSelect" onchange="onVillageChange()" class="w-full px-3.5 py-3 bg-emerald-50/50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-700 rounded-xl text-base font-bold text-emerald-950 dark:text-emerald-100 outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="">-- पहले जनपद एवं तहसील चुनें --</option>
+          </select>
+          <div class="flex items-center justify-between text-xs sm:text-sm text-slate-500 dark:text-slate-400 pt-1">
+            <span id="lblCurrentVillagePrefix">चयनित गाँव:</span>
+            <span id="currentVillageBadge" class="font-extrabold text-emerald-600 dark:text-emerald-400">–</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 2: ROAD WIDTH SURCHARGE            -->
+      <!-- ========================================== -->
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-3.5 transition-colors">
+        <div class="flex items-start justify-between gap-2.5 sm:gap-4 border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="flex items-start space-x-2.5 min-w-0 flex-1">
+            <span class="w-7 h-7 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 mt-0.5">2</span>
+            <div class="min-w-0 flex-1">
+              <h2 id="lblRoadHeader" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                मार्ग की चौड़ाई एवं नियमावली अधिभार
+              </h2>
+              <p id="lblRoadSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">0 दूरी संपत्तियों पर चौड़ाई अनुसार अधिभार</p>
+            </div>
+          </div>
+          <span id="badgeRoadWidthPercent" class="text-xs font-black px-2.5 py-1 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 dark:border-emerald-400/30 shrink-0 whitespace-nowrap mt-0.5">
+            +0%
+          </span>
+        </div>
+
+        <div id="roadWidthBtnContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <button type="button" id="btnRoad1" onclick="onRoadWidthChange(3.0)" class="w-full h-12 px-2 rounded-xl border border-emerald-600 bg-emerald-600 text-white font-bold text-xs sm:text-sm shadow-sm shadow-emerald-600/20 transition-all text-center flex items-center justify-center leading-tight">
+            &lt; 5 मी० (0%)
+          </button>
+          <button type="button" id="btnRoad2" onclick="onRoadWidthChange(5.0)" class="w-full h-12 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+            5 से 12 मी० (+5%)
+          </button>
+          <button type="button" id="btnRoad3" onclick="onRoadWidthChange(12.0)" class="w-full h-12 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+            12 से 15 मी० (+10%)
+          </button>
+          <button type="button" id="btnRoad4" onclick="onRoadWidthChange(15.0)" class="w-full h-12 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+            ≥ 15 मी० (+15%)
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 3: LAND PARCELS & DISTANCE         -->
+      <!-- ========================================== -->
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div class="flex items-center justify-between gap-2.5 sm:gap-4 border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="flex items-start space-x-2.5 min-w-0 flex-1">
+            <span class="w-7 h-7 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 mt-0.5">3</span>
+            <div class="min-w-0 flex-1">
+              <h2 id="lblLandHeader" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                भूखंड का क्षेत्रफल एवं मार्ग से दूरी
+              </h2>
+              <p id="lblLandSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">सड़क से दूरी के अनुसार भिन्न-भिन्न खंड जोड़ें</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" id="btnClearValuationSec3" onclick="promptClearValuation()" title="डेटा साफ़ करें" class="h-10 sm:h-12 px-2.5 sm:px-3.5 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all flex items-center justify-center space-x-1.5 whitespace-nowrap">
+              <svg class="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span>साफ़ करें</span>
+            </button>
+            <button type="button" id="btnAddLandSegment" onclick="addLandSegment()" class="h-10 sm:h-12 px-3 sm:px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm shadow-emerald-600/20 transition-all flex items-center justify-center space-x-1.5 whitespace-nowrap">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>+ भूमि खंड जोड़ें</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="landSegmentsContainer" class="space-y-3.5">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 4: BUILDING & FLOOR DETAILS        -->
+      <!-- ========================================== -->
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div class="flex items-center justify-between gap-2.5 sm:gap-4 border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="flex items-start space-x-2.5 min-w-0 flex-1">
+            <span class="w-7 h-7 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 mt-0.5">4</span>
+            <div class="min-w-0 flex-1">
+              <h2 id="lblBldgHeader" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                निर्मित भवन अथवा तलों का विवरण
+              </h2>
+              <p id="lblBldgSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">व्यावसायिक दुकान/कार्यालय, फ्लैट अथवा गैर-व्यावसायिक पक्का/टिनशेड</p>
+            </div>
+          </div>
+          <button type="button" id="btnAddBuilding" onclick="addBuildingComponent()" class="h-12 px-3.5 sm:px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm shadow-indigo-600/20 transition-all flex items-center justify-center space-x-1.5 shrink-0 whitespace-nowrap">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ निर्माण जोड़ें</span>
+          </button>
+        </div>
+
+        <div id="buildingsContainer" class="space-y-3.5">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+
+        <!-- Open Land Balance Banner -->
+        <div class="p-3.5 bg-amber-50/80 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25 rounded-xl flex items-center justify-between text-xs">
+          <div>
+            <div id="lblOpenLandBalTitle" class="font-bold text-amber-900 dark:text-amber-300">अवशेष खुली भूमि:</div>
+            <div id="lblOpenLandBalSub" class="text-amber-700 dark:text-amber-400 text-[11px]">कुल भूखंड - भूतल निर्मित क्षेत्रफल</div>
+          </div>
+          <div id="openLandBalanceVal" class="font-black text-amber-950 dark:text-amber-200 text-sm font-sans">0.00 वर्गमीटर</div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SECTION: DYNAMIC QUICK TIPS & LEGAL GUIDELINES           -->
+      <!-- ======================================================== -->
+      <section id="sectionQuickTips" class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-3.5 transition-colors">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+            <div class="w-8 h-8 rounded-xl bg-amber-500/15 dark:bg-amber-400/20 border border-amber-500/30 dark:border-amber-400/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0 shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h2 id="lblQuickTipsHeading" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                त्वरित सुझाव एवं विधिक नियम
+              </h2>
+              <p id="lblQuickTipsSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                संव्यवहार, स्टाम्प छूट व मूल्यांकन मार्गदर्शन
+              </p>
+            </div>
+          </div>
+          <span id="badgeQuickTipsCount" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 dark:bg-amber-400/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/30 shrink-0">
+            3 सुझाव
+          </span>
+        </div>
+
+        <!-- Dynamic Container for Tips Cards -->
+        <div id="containerQuickTips" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Injected dynamically by updateQuickTips() in app.js -->
+        </div>
+      </section>
+
+      <!-- BOTTOM ACTION CARD (Navigates to Result Tab) -->
+      <section class="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 dark:from-emerald-900 dark:via-slate-900 dark:to-slate-950 text-white rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-emerald-500/30">
+        <div>
+          <div id="lblLiveEst" class="text-xs text-emerald-200 font-semibold uppercase tracking-wider">अनुमानित बाजार मूल्य:</div>
+          <div id="liveValuationPreview" class="text-2xl font-black text-white tracking-tight font-sans">₹ 0</div>
+        </div>
+        <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full sm:w-auto">
+          <!-- Clear / Start New Valuation Button -->
+          <button type="button" id="btnClearValuation" onclick="promptClearValuation()" title="नया मूल्यांकन" class="h-12 px-3 sm:px-4 bg-rose-600/85 hover:bg-rose-700 active:bg-rose-800 text-white font-bold text-xs rounded-xl backdrop-blur-xs transition-all flex items-center justify-center space-x-1.5 border border-rose-400/40 whitespace-nowrap shadow-xs">
+            <svg class="w-4 h-4 text-rose-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span id="btnClearValuationText">नया / साफ़ करें</span>
+          </button>
+          <button type="button" id="btnQuickSaveCalc" onclick="saveValuationToHistory()" title="इतिहास में सुरक्षित करें" class="h-12 px-3 sm:px-4 bg-white/15 hover:bg-white/25 active:bg-white/30 text-white font-bold text-xs rounded-xl backdrop-blur-xs transition-all flex items-center justify-center space-x-1.5 border border-white/20 whitespace-nowrap shadow-xs">
+            <svg class="w-4 h-4 text-emerald-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            <span id="btnQuickSaveCalcText">सहेजें</span>
+          </button>
+          <button type="button" id="btnViewResults" onclick="switchTab('result')" class="col-span-2 sm:col-span-1 sm:flex-initial h-12 px-4 sm:px-5 bg-white dark:bg-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-400 active:bg-emerald-100 text-emerald-950 dark:text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 whitespace-nowrap">
+            <span>परिणाम एवं स्टाम्प शुल्क देखें ➔</span>
+          </button>
+        </div>
+      </section>
+      <div class="h-12 sm:h-8" aria-hidden="true"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: RESULTS TAB (IN BETWEEN CALC & SETTINGS) -->
+    <!-- ========================================== -->
+    <div id="viewResult" class="hidden space-y-4 sm:space-y-5">
+
+      <!-- ============================================================ -->
+      <!-- SINGLE A4 HIGH-RES PRINT IMAGE EXPORT & SAVE SECTION         -->
+      <!-- ============================================================ -->
+      <div id="sectionExportActions" class="no-print p-4 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-3 transition-colors">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 shrink-0 border border-slate-300 dark:border-slate-700 shadow-xs">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div id="lblPrintTitle" class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight">
+              A4 मूल्यांकन विवरण प्रिंट एवं निर्यात
+            </div>
+            <div id="lblPrintTitleInfo" class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 truncate">
+              शीर्ष QR कोड प्रमाणीकरण सहित आधिकारिक PDF रिपोर्ट • ब्लैक & व्हाइट प्रिंट अनुकूल
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Actions Grid: Print, PDF, HD PNG, JPEG, Save to History -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-0.5">
+          <!-- Action 1: Print A4 (Direct System Print Dialog) -->
+          <button type="button" id="btnPrintA4" onclick="printA4Report()" class="w-full h-12 px-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl text-xs font-black shadow-sm shadow-indigo-600/20 transition-all flex items-center justify-center space-x-1.5 border border-indigo-500/40">
+            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span id="btnPrintA4Text" class="truncate">प्रिंट (A4)</span>
+          </button>
+
+          <!-- Action 2: Official Verified PDF with QR -->
+          <button type="button" id="btnExportPdf" onclick="exportValuationReport('pdf')" class="w-full h-12 px-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-sm shadow-emerald-600/20 transition-all flex items-center justify-center space-x-1 border border-emerald-500/40">
+            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span id="btnExportPdfText" class="truncate">सत्यापित PDF</span>
+            <span class="bg-emerald-500 text-[10px] text-white px-1 py-0.5 rounded font-black tracking-wide shrink-0">QR</span>
+          </button>
+
+          <!-- Action 3: HD PNG Slip -->
+          <button type="button" id="btnExportSlip" onclick="exportValuationReport('png')" class="w-full h-12 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 active:bg-slate-300 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1">
+            <svg class="w-4 h-4 text-slate-600 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span class="truncate">HD PNG</span>
+          </button>
+
+          <!-- Action 4: High Res JPEG -->
+          <button type="button" id="btnExportJpeg" onclick="exportValuationReport('jpeg')" class="w-full h-12 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 active:bg-slate-300 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1">
+            <svg class="w-4 h-4 text-slate-600 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span class="truncate">JPEG</span>
+          </button>
+
+          <!-- Action 5: Save to History -->
+          <button type="button" id="btnSaveToHistory" onclick="saveValuationToHistory()" class="col-span-2 sm:col-span-1 w-full h-12 px-2 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-sm shadow-teal-600/20 transition-all flex items-center justify-center space-x-1 border border-teal-500/40">
+            <svg class="w-4 h-4 text-teal-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            <span id="btnSaveToHistoryText" class="truncate">इतिहास</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- HERO TOTAL VALUATION CARD -->
+      <section class="bg-gradient-to-br from-emerald-700 via-teal-800 to-slate-900 dark:from-emerald-900 dark:via-slate-900 dark:to-slate-950 text-white rounded-3xl p-5 sm:p-6 shadow-xl relative overflow-hidden border border-emerald-500/30">
+        <div class="flex items-center justify-between">
+          <div>
+            <p id="lblMarketValTitle" class="text-xs uppercase font-bold text-emerald-200 tracking-wider">
+              सकल संपत्ति बाजार मूल्य:
+            </p>
+            <h2 id="displayGrandTotal" class="text-3xl sm:text-4xl font-black tracking-tight mt-1 font-sans text-white">₹ 0</h2>
+            <p id="displayInLakhs" class="text-xs sm:text-sm font-bold text-emerald-300 mt-0.5 font-sans">₹ 0.00 लाख</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 shadow-inner shrink-0">
+            <svg class="w-7 h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+        </div>
+
+        <!-- Metrics Row: Covered Land, Uncovered Land, Building & Surcharge -->
+        <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-white/15 text-center">
+          <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-xs">
+            <div id="lblMetricCoveredLand" class="text-[11px] text-emerald-200 font-semibold leading-tight">आच्छादित भूमि</div>
+            <div id="metricCoveredLandValue" class="text-xs sm:text-sm font-black font-sans mt-1 text-white">₹ 0</div>
+          </div>
+          <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-xs">
+            <div id="lblMetricUncoveredLand" class="text-[11px] text-emerald-200 font-semibold leading-tight">अनाच्छादित भूमि</div>
+            <div id="metricUncoveredLandValue" class="text-xs sm:text-sm font-black font-sans mt-1 text-white">₹ 0</div>
+          </div>
+          <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-xs">
+            <div id="lblMetricBldgValue" class="text-[11px] text-emerald-200 font-semibold leading-tight">भवन व अधिभार</div>
+            <div id="metricBldgValue" class="text-xs sm:text-sm font-black font-sans mt-1 text-white">₹ 0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ITEMIZED BREAKDOWN -->
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-3.5 transition-colors">
+        <div class="flex items-start justify-between gap-2.5 sm:gap-4 border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <div class="min-w-0 flex-1">
+            <h3 id="lblBreakdownTitle" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+              विस्तृत मूल्यांकन विवरण
+            </h3>
+            <p id="lblBreakdownSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+              भूखंड (आच्छादित व खुली भूमि) एवं निर्माण का मदवार विवरण (अधिभार सहित)
+            </p>
+          </div>
+          <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap mt-0.5">
+            गोल ₹1,000
+          </span>
+        </div>
+        <div id="itemizedBreakdownList" class="space-y-2.5">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- DEED TYPE SPECIFIC DUES & CHARGES CALCULATION SECTION        -->
+      <!-- ============================================================ -->
+
+      <!-- CASE A: SALE DEED (BUYER CATEGORY & ASSESSMENT) -->
+      <section id="sectionSaleDeedResult" class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 id="lblBuyerCategoryTitle" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+              क्रेता वर्ग का चयन:
+            </h3>
+            <span id="lblSaleDeedRule" class="text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0">विक्रय विलेख नियम</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" id="btnBuyerGeneral" onclick="setBuyerType('general')" class="w-full h-12 px-1.5 py-1 rounded-xl border border-emerald-600 bg-emerald-600 text-white font-bold text-xs sm:text-sm shadow-sm shadow-emerald-600/20 transition-all text-center flex items-center justify-center leading-tight">
+              पुरुष / सामान्य
+            </button>
+            <button type="button" id="btnBuyerFemale" onclick="setBuyerType('female')" class="w-full h-12 px-1.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+              महिला क्रेता
+            </button>
+            <button type="button" id="btnBuyerBoth" onclick="setBuyerType('both')" class="w-full h-12 px-1.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+              संयुक्त क्रेता
+            </button>
+          </div>
+        </div>
+
+        <!-- Joint Stake Inputs (Visible only when Joint is selected) -->
+        <div id="divJointStake" class="hidden p-3.5 bg-emerald-50/70 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/25 rounded-2xl space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <div>
+              <label id="lblFemaleStake" class="block text-xs font-bold text-emerald-950 dark:text-emerald-200 mb-1">
+                महिला क्रेता का हिस्सा (%):
+              </label>
+              <div class="flex items-center space-x-2">
+                <input
+                  id="inputFemaleStake"
+                  type="number"
+                  value="50"
+                  min="1"
+                  max="99"
+                  oninput="recalculate()"
+                  class="w-24 px-3 py-2 bg-white dark:bg-slate-800 border border-emerald-300 dark:border-emerald-700 rounded-xl text-sm font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+                />
+                <span class="text-xs font-semibold text-emerald-800 dark:text-emerald-300"><span id="lblFemaleStakeAutoMale">पुरुष:</span> <span id="lblMalePercentAuto" class="font-bold">50%</span></span>
+              </div>
+            </div>
+            <div class="bg-white/80 dark:bg-slate-800/80 p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-700 text-xs space-y-1">
+              <div class="flex justify-between items-center">
+                <span id="lblFemaleValuationStake" class="text-slate-600 dark:text-slate-300 font-medium">महिला मूल्यांकन हिस्सा:</span>
+                <span id="displayFemaleStakeVal" class="font-extrabold text-emerald-900 dark:text-emerald-300 font-sans">₹ 0</span>
+              </div>
+              <div class="flex justify-between items-center border-t border-slate-100 dark:border-slate-700 pt-1">
+                <span id="lblMaleValuationStake" class="text-slate-600 dark:text-slate-300 font-medium">पुरुष मूल्यांकन हिस्सा:</span>
+                <span id="displayMaleStakeVal" class="font-extrabold text-slate-900 dark:text-slate-100 font-sans">₹ 0</span>
+              </div>
+            </div>
+          </div>
+          <!-- Joint Cap Rule Highlight -->
+          <div id="lblJointRegistrationRule" class="text-[11px] text-emerald-800 dark:text-emerald-300 bg-white/60 dark:bg-slate-900/60 p-2 rounded-lg border border-emerald-200 dark:border-emerald-800">
+            • <strong>संयुक्त क्रेता निबंधन नियम:</strong> संयुक्त विलेख में अधिकतम निबंधन शुल्क बिना विभाजन ₹50,000 की एकल सीमा पर सीमित रहता है।
+          </div>
+        </div>
+
+        <!-- 1. GENERAL / MALE BUYER CARD -->
+        <div id="cardMaleResult" class="p-4 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-700 pb-2">
+            <span id="lblMaleCardHeader" class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">पुरुष / सामान्य क्रेता प्रभार</span>
+            <span class="text-xs font-black bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-2.5 py-0.5 rounded-full">5% + 2%</span>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+            <div class="flex items-center justify-between py-2.5 px-3">
+              <div>
+                <span id="lblMaleStampDuty" class="font-bold text-slate-700 dark:text-slate-300">स्टाम्प शुल्क:</span>
+                <div id="lblMaleStampFormula" class="text-[11px] text-slate-500 dark:text-slate-400">5% मानक दर • गोल ₹10</div>
+              </div>
+              <span id="valMaleStamp" class="font-black text-slate-900 dark:text-white text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+            </div>
+            <div class="flex items-center justify-between py-2.5 px-3">
+              <div>
+                <span id="lblMaleRegistrationFee" class="font-bold text-slate-700 dark:text-slate-300">निबंधन शुल्क:</span>
+                <div id="lblMaleRegFormula" class="text-[11px] text-slate-500 dark:text-slate-400">2% दर • अधिकतम सीमा ₹50,000 • गोल ₹10</div>
+              </div>
+              <span id="valMaleReg" class="font-black text-slate-900 dark:text-white text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+            </div>
+            <div class="flex items-center justify-between py-2.5 px-3 bg-slate-50/70 dark:bg-slate-800/50 font-black text-slate-950 dark:text-white">
+              <span id="lblMaleTotal" class="text-xs sm:text-sm">कुल सामान्य सरकारी प्रभार:</span>
+              <span id="valMaleTotal" class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400 font-sans whitespace-nowrap">₹ 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. FEMALE BUYER CONCESSION CALCULATION CARD -->
+        <div id="cardFemaleResult" class="hidden p-4 bg-emerald-50/60 dark:bg-emerald-500/10 border border-emerald-300/80 dark:border-emerald-500/25 rounded-2xl space-y-3.5">
+          <div class="flex items-center justify-between border-b border-emerald-200/80 dark:border-emerald-500/30 pb-2">
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input
+                id="chkFemaleEligible"
+                type="checkbox"
+                checked
+                onchange="recalculate()"
+                class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+              />
+              <span id="lblChkFemaleEligible" class="text-xs sm:text-sm font-bold text-emerald-950 dark:text-emerald-200">
+                महिला क्रेता रियायत
+              </span>
+            </label>
+            <span id="badgeFemaleRate" class="text-xs font-black bg-emerald-600 text-white px-2.5 py-0.5 rounded-full">3.75% + 2%</span>
+          </div>
+
+          <p id="lblFemaleRuleText" class="text-[11px] text-emerald-800 dark:text-emerald-300 leading-snug">
+            उत्तराखंड शासनादेश: अधिकतम दो क्रय विलेखों अथवा कुल ₹25 लाख संचयी संपत्ति मूल्य तक 1.25% छूट। ₹25 लाख से अधिक मूल्य पर 5% स्टाम्प शुल्क।
+          </p>
+
+          <!-- Female Previous Concessions -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+            <div>
+              <label id="lblPriorPurchasesLabel" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">पूर्व में प्रयुक्त छूट संख्या:</label>
+              <select id="selPriorPurchaseCount" onchange="recalculate()" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold outline-none text-slate-900 dark:text-white">
+                <option value="0">0 (प्रथम बार - पूर्ण मान्य)</option>
+                <option value="1">1 (द्वितीय बार - शेष मूल्य मान्य)</option>
+                <option value="2">2 (दो बार प्रयुक्त - छूट समाप्त)</option>
+              </select>
+            </div>
+            <div>
+              <label id="lblPriorValueLabel" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">पूर्व में प्रयुक्त संपत्ति मूल्य (₹):</label>
+              <input
+                id="inputPriorValueUsed"
+                type="number"
+                value="0"
+                min="0"
+                step="1000"
+                oninput="recalculate()"
+                class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-white outline-none font-sans"
+              />
+            </div>
+          </div>
+
+          <!-- Female Breakdown Results -->
+          <div class="bg-white dark:bg-slate-900 rounded-xl border border-emerald-200 dark:border-emerald-800 divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+            <div class="flex items-center justify-between py-2.5 px-3">
+              <div>
+                <span id="lblFemaleStampDuty" class="font-bold text-slate-700 dark:text-slate-300">महिला स्टाम्प शुल्क:</span>
+                <div id="femaleStampFormula" class="text-[11px] text-emerald-800 dark:text-emerald-400 font-medium">₹ 0 पर 3.75% छूट दर • गोल ₹10</div>
+              </div>
+              <span id="valFemaleStamp" class="font-black text-emerald-900 dark:text-emerald-300 text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+            </div>
+            <div class="flex items-center justify-between py-2.5 px-3">
+              <div>
+                <span id="lblFemaleRegistrationFee" class="font-bold text-slate-700 dark:text-slate-300">निबंधन शुल्क:</span>
+                <div id="lblFemaleRegFormula" class="text-[11px] text-slate-500 dark:text-slate-400">2% दर • अधिकतम ₹50,000 • गोल ₹10</div>
+              </div>
+              <span id="valFemaleReg" class="font-black text-slate-900 dark:text-white text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+            </div>
+            <div class="flex items-center justify-between py-2.5 px-3 bg-emerald-50/50 dark:bg-slate-800/50 font-black text-emerald-950 dark:text-emerald-200">
+              <span id="lblFemaleTotal" class="text-xs sm:text-sm">कुल महिला प्रभार:</span>
+              <span id="valFemaleTotal" class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400 font-sans whitespace-nowrap">₹ 0</span>
+            </div>
+          </div>
+
+          <!-- Savings Badge -->
+          <div class="p-2.5 bg-emerald-600 dark:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-between shadow-xs">
+            <span id="femaleSavingDisplay">महिला छूट बचत: ₹ 0</span>
+            <span class="text-emerald-200 text-sm">✓</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CASE B: FAMILY GIFT DEED RESULT CARD -->
+      <section id="sectionGiftDeedResult" class="hidden bg-white dark:bg-[#1E293B] rounded-2xl border border-purple-200 dark:border-purple-800 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div class="flex items-center justify-between border-b border-purple-100 dark:border-purple-800 pb-3">
+          <div>
+            <h3 id="lblGiftResultHeader" class="text-sm sm:text-base font-bold text-purple-950 dark:text-purple-200">
+              दान विलेख सरकारी प्रभार
+            </h3>
+            <p id="lblGiftSubHeader" class="text-xs text-purple-800 dark:text-purple-300">
+              रक्त सम्बन्धी / परिवार के पक्ष में 1% स्टाम्प शुल्क
+            </p>
+          </div>
+          <span id="badgeGiftRate" class="text-xs font-black bg-purple-700 text-white px-2.5 py-0.5 rounded-full">
+            1% + 2%
+          </span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-purple-200 dark:border-purple-800 divide-y divide-purple-100 dark:divide-slate-800 text-xs">
+          <div class="flex items-center justify-between py-2.5 px-3">
+            <div>
+              <span id="lblGiftStampDuty" class="font-bold text-slate-700 dark:text-slate-300">दान स्टाम्प शुल्क:</span>
+              <div id="lblGiftStampFormula" class="text-[11px] text-purple-800 dark:text-purple-400">1% रियायती दर • गोल ₹10</div>
+            </div>
+            <span id="valGiftStamp" class="font-black text-purple-950 dark:text-purple-300 text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5 px-3">
+            <div>
+              <span id="lblGiftRegistrationFee" class="font-bold text-slate-700 dark:text-slate-300">निबंधन शुल्क:</span>
+              <div id="lblGiftRegFormula" class="text-[11px] text-slate-500 dark:text-slate-400">2% दर • अधिकतम सीमा ₹50,000 • गोल ₹10</div>
+            </div>
+            <span id="valGiftReg" class="font-black text-slate-900 dark:text-white text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5 px-3 bg-purple-50/70 dark:bg-purple-950/40 font-black text-purple-950 dark:text-purple-200">
+            <span id="lblGiftTotal" class="text-xs sm:text-sm">कुल दान विलेख प्रभार:</span>
+            <span id="valGiftTotal" class="text-sm sm:text-base font-black text-purple-700 dark:text-purple-400 font-sans whitespace-nowrap">₹ 0</span>
+          </div>
+        </div>
+
+        <div class="p-2.5 bg-purple-700 dark:bg-purple-900 text-white rounded-xl text-xs font-bold flex items-center justify-between shadow-xs">
+          <span id="giftSavingDisplay">पारिवारिक छूट से स्टाम्प बचत (5% सामान्य दर की तुलना में): ₹ 0</span>
+          <span class="text-purple-200 text-sm">✓</span>
+        </div>
+      </section>
+
+      <!-- CASE C: LEASE DEED RESULT CARD -->
+      <section id="sectionLeaseDeedResult" class="hidden bg-white dark:bg-[#1E293B] rounded-2xl border border-blue-200 dark:border-blue-800 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div class="flex items-center justify-between border-b border-blue-100 dark:border-blue-800 pb-3">
+          <div>
+            <h3 id="lblLeaseResultHeader" class="text-sm sm:text-base font-bold text-blue-950 dark:text-blue-200">
+              पट्टा विलेख सरकारी प्रभार
+            </h3>
+            <p id="lblLeaseAppliedRule" class="text-xs text-blue-800 dark:text-blue-300">
+              पट्टा नियम अनुसार आगणित
+            </p>
+          </div>
+          <span id="badgeLeaseAppliedRate" class="text-xs font-black bg-blue-700 text-white px-2.5 py-0.5 rounded-full">
+            Rule Applied
+          </span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-blue-200 dark:border-blue-800 divide-y divide-blue-100 dark:divide-slate-800 text-xs">
+          <div class="flex items-center justify-between py-2.5 px-3">
+            <div>
+              <span id="lblLeaseStampDuty" class="font-bold text-slate-700 dark:text-slate-300">पट्टा स्टाम्प शुल्क:</span>
+              <div id="lblLeaseStampFormula" class="text-[11px] text-blue-800 dark:text-blue-400">नियम अनुसार • गोल ₹10</div>
+            </div>
+            <span id="valLeaseStamp" class="font-black text-blue-950 dark:text-blue-300 text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5 px-3">
+            <div>
+              <span id="lblLeaseRegistrationFee" class="font-bold text-slate-700 dark:text-slate-300">निबंधन शुल्क:</span>
+              <div id="lblLeaseRegFormula" class="text-[11px] text-slate-500 dark:text-slate-400">2% दर • अधिकतम सीमा ₹25,000 • गोल ₹10</div>
+            </div>
+            <span id="valLeaseReg" class="font-black text-slate-900 dark:text-white text-sm sm:text-base font-sans whitespace-nowrap">₹ 0</span>
+          </div>
+          <div class="flex items-center justify-between py-2.5 px-3 bg-blue-50/70 dark:bg-blue-950/40 font-black text-blue-950 dark:text-blue-200">
+            <span id="lblLeaseTotal" class="text-xs sm:text-sm">कुल पट्टा विलेख प्रभार:</span>
+            <span id="valLeaseTotal" class="text-sm sm:text-base font-black text-blue-700 dark:text-blue-400 font-sans whitespace-nowrap">₹ 0</span>
+          </div>
+        </div>
+
+        <!-- Institutional Exemption Banner -->
+        <div id="lblInstitutionalExemption" class="p-3 bg-amber-50/80 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25 rounded-xl text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
+          <strong>विशेष सांविधिक टिप्पणी:</strong> यूपीएफसी, आवास विकास परिषद, विकास प्राधिकरण, सिडकुल, डीआईसी अथवा राज्य निगमों द्वारा सीधे निर्धारित आवंटन/पट्टा दरों पर सर्किल रेट नियम लागू नहीं होते।
+        </div>
+      </section>
+
+      <!-- DYNAMIC TOTAL PAYABLE BANNER (Always matches selected deed & buyer) -->
+      <div class="p-4 sm:p-5 bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 dark:from-emerald-950 dark:via-slate-900 dark:to-slate-950 text-white rounded-2xl shadow-lg flex items-center justify-between gap-3 border border-emerald-500/30">
+        <div>
+          <div id="lblPayableTitle" class="text-xs text-emerald-300 font-bold uppercase tracking-wider">कुल देय सरकारी शुल्क (स्टाम्प + निबंधन):</div>
+          <div id="lblPayableSubtitle" class="text-[11px] text-emerald-200 font-semibold mt-0.5">सामान्य / पुरुष क्रेता (गोल ₹10)</div>
+        </div>
+        <div id="valPayableTotal" class="text-2xl sm:text-3xl font-black text-white font-sans shrink-0 whitespace-nowrap">₹ 0</div>
+      </div>
+
+      <!-- ACTION BUTTONS: SAVE TO HISTORY & BACK TO EDIT -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+        <button type="button" id="btnSaveToHistoryBottom" onclick="saveValuationToHistory()" class="w-full min-h-[50px] sm:min-h-[52px] px-5 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-extrabold text-sm sm:text-base rounded-xl border border-teal-500/40 shadow-sm shadow-teal-600/20 transition-all flex items-center justify-center space-x-2 whitespace-nowrap cursor-pointer">
+          <svg class="w-4 h-4 text-teal-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+          <span id="btnSaveToHistoryBottomText">इतिहास में सुरक्षित करें</span>
+        </button>
+        <button type="button" id="btnBackToCalc" onclick="switchTab('calc')" class="w-full min-h-[50px] sm:min-h-[52px] px-5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-sm sm:text-base rounded-xl border border-slate-200 dark:border-slate-700 transition-colors flex items-center justify-center space-x-1.5 whitespace-nowrap cursor-pointer">
+          <span id="lblBackToCalc">← विवरण में बदलाव करें</span>
+        </button>
+      </div>
+      <div class="h-12 sm:h-8" aria-hidden="true"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: SETTINGS TAB                       -->
+    <!-- ========================================== -->
+    <div id="viewSettings" class="hidden space-y-4 sm:space-y-5">
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-5 transition-colors">
+        <div class="border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <h2 id="lblSettingsHeading" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+            सिस्टम व दर विन्यास सेटिंग्स
+          </h2>
+          <!-- <p id="lblSettingsSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+            थीम मोड, भाषा, गाँव सूची क्रम, महिला छूट सीमा व निबंधन शुल्क
+          </p> -->
+        </div>
+
+        <!-- 1. Theme Selection: Auto, Light, Dark -->
+        <div>
+          <label id="lblTheme" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+            थीम मोड:
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" id="btnThemeAuto" onclick="setThemeMode('auto')" class="w-full h-11 px-2 rounded-xl text-xs font-bold border border-emerald-600 bg-emerald-600 text-white shadow-sm shadow-emerald-600/20 transition-all text-center flex items-center justify-center leading-tight">
+              स्वतः
+            </button>
+            <button type="button" id="btnThemeLight" onclick="setThemeMode('light')" class="w-full h-11 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+              ☀️ लाइट
+            </button>
+            <button type="button" id="btnThemeDark" onclick="setThemeMode('dark')" class="w-full h-11 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-center flex items-center justify-center leading-tight">
+              🌙 डार्क
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Language Selector -->
+        <div>
+          <label id="lblAppLanguage" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+            ऐप की भाषा:
+          </label>
+          <div class="flex gap-2">
+            <button type="button" id="langHiBtn" onclick="setLanguage('hi')" class="flex-1 h-11 px-4 rounded-xl text-sm font-bold shadow-sm shadow-emerald-600/20 transition-all border border-emerald-600 bg-emerald-600 text-white flex items-center justify-center whitespace-nowrap">
+              हिन्दी
+            </button>
+            <button type="button" id="langEnBtn" onclick="setLanguage('en')" class="flex-1 h-11 px-4 rounded-xl text-sm font-bold shadow-xs transition-all border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center whitespace-nowrap">
+              English
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Village List Sort Order -->
+        <div class="space-y-2">
+          <label id="lblSettingsSortTitle" class="block text-xs font-bold text-slate-700 dark:text-slate-300">गाँव सूची का क्रम:</label>
+          <div class="space-y-2 text-xs">
+            <label class="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border border-slate-200 dark:border-slate-700">
+              <input type="radio" name="settingSortMode" value="auto" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500" />
+              <span id="lblSortAuto" class="font-bold text-slate-800 dark:text-slate-200">वर्णमाला क्रम (अ-ज्ञ)</span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border border-slate-200 dark:border-slate-700">
+              <input type="radio" name="settingSortMode" value="default" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500" />
+              <span id="lblSortDefault" class="font-bold text-slate-800 dark:text-slate-200">डेटासेट का मूल क्रम</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. Ceiling and Cap Inputs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label id="lblFemaleLimitLabel" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+              महिला स्टाम्प छूट संचयी मूल्य सीमा (₹):
+            </label>
+            <input 
+              id="settingFemaleValLimit" 
+              type="number" 
+              value="2500000" 
+              class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+            />
+          </div>
+          <div>
+            <label id="lblMaxRegFeeLabel" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+              अधिकतम निबंधन शुल्क सीमा (₹):
+            </label>
+            <input 
+              id="settingMaxRegFee" 
+              type="number" 
+              value="50000" 
+              class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
+            />
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-4 flex flex-col sm:flex-row gap-3.5">
+          <button 
+            type="button" 
+            id="btnSaveSettings" 
+            onclick="promptSaveSettings()" 
+            class="flex-1 min-h-[54px] py-3.5 px-5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md shadow-emerald-600/30 hover:shadow-lg hover:shadow-emerald-600/40 transition-all flex items-center justify-center space-x-2.5 cursor-pointer"
+          >
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            <span id="btnSaveSettingsText">सेटिंग्स सुरक्षित करें</span>
+          </button>
+          <button 
+            type="button" 
+            id="btnResetSettings" 
+            onclick="promptRestoreDefaultSettings()" 
+            class="flex-1 min-h-[54px] py-3.5 px-5 bg-amber-50 hover:bg-amber-100 active:bg-amber-200 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 dark:active:bg-amber-500/30 text-amber-950 dark:text-amber-200 font-extrabold text-sm sm:text-base rounded-2xl border-2 border-amber-300 dark:border-amber-500/40 shadow-xs hover:shadow-sm transition-all flex items-center justify-center space-x-2.5 cursor-pointer"
+          >
+            <svg class="w-5 h-5 shrink-0 text-amber-700 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span id="btnResetSettingsText">डिफ़ॉल्ट सेटिंग्स पुनः स्थापित करें</span>
+          </button>
+        </div>
+      </section>
+      <div class="h-12 sm:h-8" aria-hidden="true"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: DATA / IMPORT TAB                  -->
+    <!-- ========================================== -->
+    <div id="viewImport" class="hidden space-y-4 sm:space-y-5">
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <div class="border-b border-slate-100 dark:border-slate-700/80 pb-3">
+          <h2 id="lblImportHeading" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+            सर्किल दर डेटाबेस प्रबंधन
+          </h2>
+          <p id="lblImportSub" class="text-xs text-slate-500 dark:text-slate-400">
+            आधिकारिक सर्किल दरें देखें अथवा नया डेटा आयात करें
+          </p>
+        </div>
+
+        <!-- Upload Container -->
+        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-6 text-center bg-slate-50/50 dark:bg-slate-800/40 transition-colors">
+          <svg class="w-10 h-10 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          <label id="lblDropFileLabel" class="block text-sm font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
+            एक्सेल (.xlsx) या JSON फ़ाइल चुनें
+            <input type="file" accept=".xlsx,.xls,.json" onchange="handleFileUpload(event)" class="hidden" />
+          </label>
+          <p id="lblDropFileLabelInfo" class="text-xs text-slate-500 dark:text-slate-400 mt-1">उत्तराखण्ड सर्किल रेट प्रारूप समर्थित</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <button type="button" id="btnResetOfficial" onclick="resetToOfficialData()" class="min-h-[48px] h-12 sm:h-13 px-5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-extrabold text-sm rounded-xl shadow-sm shadow-emerald-600/25 transition-all flex items-center justify-center space-x-2 whitespace-nowrap cursor-pointer">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span id="lblResetOfficialBtn">आधिकारिक डेटा पुनः लोड करें</span>
+          </button>
+          <button type="button" id="btnExportJson" onclick="exportDataset()" class="min-h-[48px] h-12 sm:h-13 px-5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-sm rounded-xl border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center space-x-2 whitespace-nowrap cursor-pointer">
+            <svg class="w-4 h-4 shrink-0 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span id="lblExportJsonBtn">डेटा डाउनलोड (JSON) करें</span>
+          </button>
+        </div>
+      </section>
+      <div class="h-12 sm:h-8" aria-hidden="true"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: HISTORY TAB                        -->
+    <!-- ========================================== -->
+    <div id="viewHistory" class="hidden space-y-4 sm:space-y-5">
+      <section class="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition-colors">
+        <!-- Header Stack: Full width for Title & Subtitle, plus equal height actions -->
+        <div class="border-b border-slate-100 dark:border-slate-700/80 pb-3.5 space-y-3">
+          <div>
+            <h2 id="lblHistoryHeading" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
+              मूल्यांकन इतिहास
+            </h2>
+            <p id="lblHistorySub" class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+              स्थानीय संग्रह में सुरक्षित पूर्व गणनाएँ
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" id="btnSaveActiveInHistory" onclick="saveValuationToHistory()" title="वर्तमान मूल्यांकन सुरक्षित करें" class="h-11 sm:h-12 px-3 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs sm:text-sm font-bold rounded-xl border border-teal-500/40 shadow-sm shadow-teal-700/25 transition-all flex items-center justify-center space-x-1.5 whitespace-nowrap cursor-pointer">
+              <svg class="w-4 h-4 text-teal-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+              <span id="lblSaveActiveHistoryBtn">वर्तमान सहेजें</span>
+            </button>
+            <button type="button" id="btnClearAllHistory" onclick="clearValuationHistory()" class="h-11 sm:h-12 px-3 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-xs sm:text-sm font-bold rounded-xl border border-rose-200 dark:border-rose-800/80 shadow-xs transition-all flex items-center justify-center space-x-1.5 whitespace-nowrap cursor-pointer">
+              <svg class="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span id="lblClearHistoryBtn">इतिहास साफ़ करें</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- History Items Container -->
+        <div id="historyListContainer" class="space-y-3.5">
+          <!-- Dynamically populated by app.js renderHistory() -->
+        </div>
+      </section>
+      <div class="h-12 sm:h-8" aria-hidden="true"></div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: CLEAR / NEW VALUATION CONFIRMATION (DUPLICATE CHECK) -->
+    <!-- ======================================================== -->
+    <div id="modalClearConfirm" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 dark:bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 transition-all">
+      <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        
+        <!-- Modal Header -->
+        <div class="flex items-start space-x-3.5">
+          <div id="modalClearIconContainer" class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
+            <!-- Icon injected dynamically -->
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 id="modalClearTitle" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
+              नया मूल्यांकन शुरू करें?
+            </h3>
+            <p id="modalClearSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              मूल्यांकन डेटा रीसेट एवं इतिहास सुरक्षा
+            </p>
+          </div>
+          <button type="button" onclick="closeClearModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors">
+            ✕
+          </button>
+        </div>
+
+        <!-- Dynamic Message Box -->
+        <div id="modalClearMessageBox" class="p-3.5 rounded-xl border text-xs leading-relaxed space-y-2">
+          <!-- Message text injected dynamically -->
+        </div>
+
+        <!-- Current Valuation Preview Pill -->
+        <div id="modalClearPreviewPill" class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs flex items-center justify-between">
+          <div class="min-w-0 flex-1 pr-2">
+            <div id="modalClearLocText" class="font-bold text-slate-800 dark:text-slate-200 truncate">स्थान: चयनित नहीं</div>
+            <div id="modalClearDeedText" class="text-slate-500 dark:text-slate-400 text-[11px] truncate">विक्रय विलेख</div>
+          </div>
+          <div class="text-right shrink-0">
+            <div id="modalClearValText" class="font-black text-emerald-700 dark:text-emerald-400 font-sans">₹ 0</div>
+            <div id="modalClearDuesText" class="text-[11px] text-slate-500 dark:text-slate-400 font-sans">देय: ₹ 0</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons (Dynamic based on unsaved / duplicate check) -->
+        <div id="modalClearActionButtons" class="pt-1 flex flex-col gap-2.5">
+          <!-- Injected dynamically -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: SETTINGS ACTION CONFIRMATION (SAVE / RESTORE)     -->
+    <!-- ======================================================== -->
+    <div id="modalSettingsConfirm" onclick="if(event.target === this) closeSettingsModal()" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 dark:bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 transition-all">
+      <div class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        
+        <!-- Modal Header -->
+        <div class="flex items-start space-x-3.5">
+          <div id="modalSettingsIconContainer" class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
+            <!-- Icon injected dynamically -->
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 id="modalSettingsTitle" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
+              <!-- Title injected dynamically -->
+            </h3>
+            <p id="modalSettingsSub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <!-- Subtitle injected dynamically -->
+            </p>
+          </div>
+          <button type="button" onclick="closeSettingsModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors">
+            ✕
+          </button>
+        </div>
+
+        <!-- Dynamic Message Box -->
+        <div id="modalSettingsMessageBox" class="p-3.5 rounded-xl border text-xs leading-relaxed space-y-1.5">
+          <!-- Message text injected dynamically -->
+        </div>
+
+        <!-- Settings Summary Details Box -->
+        <div id="modalSettingsPreviewBox" class="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+          <!-- Parameter summary items injected dynamically -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div id="modalSettingsActionButtons" class="pt-1 flex flex-col sm:flex-row gap-2.5">
+          <!-- Confirm and Cancel buttons injected dynamically -->
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- BOTTOM NAVIGATION BAR (5 TABS: Valuation, Result, History, Settings, Data) -->
+  <!-- ======================================================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800 shadow-xl transition-colors">
+    <div class="max-w-3xl mx-auto flex items-center justify-between sm:justify-around px-3 sm:px-6 md:px-8 py-1.5">
+      
+      <!-- Tab 1: Valuation (End Tab) -->
+      <button id="btnNavCalc" onclick="switchTab('calc')" class="bottom-tab-active relative flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all text-emerald-600 dark:text-emerald-400">
+        <div class="tab-icon-pill w-12 sm:w-14 h-7 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-400/30 shadow-xs">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        </div>
+        <span id="lblBottomTabCalc" class="text-xs sm:text-[13px] font-bold leading-tight mt-1 whitespace-nowrap tracking-tight text-emerald-600 dark:text-emerald-400">मूल्यांकन</span>
+      </button>
+
+      <!-- Tab 2: Result -->
+      <button id="btnNavResult" onclick="switchTab('result')" class="bottom-tab-inactive relative flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <div class="tab-icon-pill w-12 sm:w-14 h-7 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 bg-transparent text-slate-400 dark:text-slate-500">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <span id="lblBottomTabResult" class="text-xs sm:text-[13px] font-medium leading-tight mt-1 whitespace-nowrap tracking-tight text-slate-500 dark:text-slate-400">परिणाम</span>
+      </button>
+
+      <!-- Tab 3: History -->
+      <button id="btnNavHistory" onclick="switchTab('history')" class="bottom-tab-inactive relative flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <div class="tab-icon-pill w-12 sm:w-14 h-7 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 bg-transparent text-slate-400 dark:text-slate-500 relative">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span id="badgeNavHistory" class="hidden absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-black bg-emerald-600 text-white shadow-xs">0</span>
+        </div>
+        <span id="lblBottomTabHistory" class="text-xs sm:text-[13px] font-medium leading-tight mt-1 whitespace-nowrap tracking-tight text-slate-500 dark:text-slate-400">इतिहास</span>
+      </button>
+
+      <!-- Tab 4: Settings -->
+      <button id="btnNavSettings" onclick="switchTab('settings')" class="bottom-tab-inactive relative flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <div class="tab-icon-pill w-12 sm:w-14 h-7 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 bg-transparent text-slate-400 dark:text-slate-500">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <span id="lblBottomTabSettings" class="text-xs sm:text-[13px] font-medium leading-tight mt-1 whitespace-nowrap tracking-tight text-slate-500 dark:text-slate-400">सेटिंग्स</span>
+      </button>
+
+      <!-- Tab 5: Data (End Tab) -->
+      <button id="btnNavData" onclick="switchTab('import')" class="bottom-tab-inactive relative flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <div class="tab-icon-pill w-12 sm:w-14 h-7 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 bg-transparent text-slate-400 dark:text-slate-500">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+        </div>
+        <span id="lblBottomTabData" class="text-xs sm:text-[13px] font-medium leading-tight mt-1 whitespace-nowrap tracking-tight text-slate-500 dark:text-slate-400">डेटा</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="bageshwar_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

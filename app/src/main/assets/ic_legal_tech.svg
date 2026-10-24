@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064E3B" />
+      <stop offset="50%" stop-color="#065F46" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Circular Shield / Official Stamp Seal Outer Ring -->
+  <circle cx="60" cy="60" r="56" fill="url(#bgGrad)" stroke="#10B981" stroke-width="2" />
+  <circle cx="60" cy="60" r="51" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="3,2" />
+  <circle cx="60" cy="60" r="47" fill="#064E3B" stroke="#047857" stroke-width="1" />
+
+  <!-- Property Pediment / House Roof Silhouetted -->
+  <path d="M 32 44 L 60 26 L 88 44 Z" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M 30 46 L 90 46" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Property Pillars / Courthouse Columns -->
+  <!-- Left Pillar -->
+  <rect x="37" y="48" width="5" height="38" rx="1.5" fill="#E2E8F0" opacity="0.9" />
+  <!-- Center Pillar -->
+  <rect x="57.5" y="48" width="5" height="38" rx="1.5" fill="#E2E8F0" opacity="0.9" />
+  <!-- Right Pillar -->
+  <rect x="78" y="48" width="5" height="38" rx="1.5" fill="#E2E8F0" opacity="0.9" />
+  
+  <!-- Pillar Base / Foundation Platform -->
+  <path d="M 28 88 L 92 88" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round" />
+  <path d="M 33 93 L 87 93" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Scales of Justice (Legal Balance) Centered -->
+  <g filter="url(#shadow)">
+    <!-- Central Pivot / Scale Stem -->
+    <line x1="60" y1="36" x2="60" y2="78" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round" />
+    <!-- Center Top Finial -->
+    <circle cx="60" cy="35" r="2.5" fill="#FBBF24" />
+
+    <!-- Balance Beam (Horizontal Lever) -->
+    <line x1="40" y1="46" x2="80" y2="46" stroke="#FDE68A" stroke-width="2.2" stroke-linecap="round" />
+
+    <!-- Left Scale Suspension Strings & Pan -->
+    <line x1="40" y1="46" x2="34" y2="58" stroke="#FDE68A" stroke-width="1" />
+    <line x1="40" y1="46" x2="46" y2="58" stroke="#FDE68A" stroke-width="1" />
+    <path d="M 32 58 Q 40 65 48 58 Z" fill="#FBBF24" stroke="#F59E0B" stroke-width="1" />
+
+    <!-- Right Scale Suspension Strings & Pan -->
+    <line x1="80" y1="46" x2="74" y2="58" stroke="#FDE68A" stroke-width="1" />
+    <line x1="80" y1="46" x2="86" y2="58" stroke="#FDE68A" stroke-width="1" />
+    <path d="M 72 58 Q 80 65 88 58 Z" fill="#FBBF24" stroke="#F59E0B" stroke-width="1" />
+
+    <!-- Official Stamp Emblem Star / Check Accent at Base -->
+    <circle cx="60" cy="78" r="4" fill="#047857" stroke="#FBBF24" stroke-width="1.5" />
+  </g>
+</svg>

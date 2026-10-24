@@ -1,0 +1,94 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Center scale inside 66dp safe zone (21 to 87) -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:translateX="13.5"
+        android:translateY="13.5">
+        
+        <!-- Seal ring -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#10B981"
+            android:strokeWidth="2.5"
+            android:pathData="M54,4 A50,50 0 1,1 53.9,4 Z" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#F59E0B"
+            android:strokeWidth="1.5"
+            android:pathData="M54,10 A44,44 0 1,1 53.9,10 Z" />
+
+        <!-- Pediment roof -->
+        <path
+            android:fillColor="#FBBF24"
+            android:pathData="M26,38 L54,20 L82,38 L80,41 L54,24 L28,41 Z" />
+        <path
+            android:fillColor="#F59E0B"
+            android:pathData="M24,40 L84,40 L84,43 L24,43 Z" />
+
+        <!-- Pillars -->
+        <path
+            android:fillColor="#F1F5F9"
+            android:pathData="M32,45 L37,45 L37,76 L32,76 Z" />
+        <path
+            android:fillColor="#F1F5F9"
+            android:pathData="M51.5,45 L56.5,45 L56.5,76 L51.5,76 Z" />
+        <path
+            android:fillColor="#F1F5F9"
+            android:pathData="M71,45 L76,45 L76,76 L71,76 Z" />
+
+        <!-- Pillar Base -->
+        <path
+            android:fillColor="#F59E0B"
+            android:pathData="M22,77 L86,77 L86,81 L22,81 Z" />
+        <path
+            android:fillColor="#D97706"
+            android:pathData="M26,82 L82,82 L82,85 L26,85 Z" />
+
+        <!-- Scales of justice central stem & finial -->
+        <path
+            android:fillColor="#FDE68A"
+            android:pathData="M52.5,28 L55.5,28 L55.5,72 L52.5,72 Z" />
+        <path
+            android:fillColor="#FDE68A"
+            android:pathData="M54,25 A3,3 0 1,1 53.9,25 Z" />
+
+        <!-- Scales balance beam -->
+        <path
+            android:fillColor="#FBBF24"
+            android:pathData="M35,42 L73,42 L73,44.5 L35,44.5 Z" />
+
+        <!-- Left Scale Pan -->
+        <path
+            android:fillColor="#F59E0B"
+            android:pathData="M29,54 Q35,60 41,54 Z" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FDE68A"
+            android:strokeWidth="1.2"
+            android:pathData="M35,43.5 L30,54 M35,43.5 L40,54" />
+
+        <!-- Right Scale Pan -->
+        <path
+            android:fillColor="#F59E0B"
+            android:pathData="M67,54 Q73,60 79,54 Z" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FDE68A"
+            android:strokeWidth="1.2"
+            android:pathData="M73,43.5 L68,54 M73,43.5 L78,54" />
+
+        <!-- Center badge -->
+        <path
+            android:fillColor="#10B981"
+            android:strokeColor="#FBBF24"
+            android:strokeWidth="1.5"
+            android:pathData="M54,68 A4,4 0 1,1 53.9,68 Z" />
+    </group>
+</vector>

@@ -1,0 +1,8 @@
+{
+  "name": "BhuLekha",
+  "description": "Real estate property market value and circle rate valuation calculation system with road width surcharge rules and dynamic Excel/CSV/JSON schema mapping.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
