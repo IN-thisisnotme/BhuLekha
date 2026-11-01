@@ -149,6 +149,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @SuppressLint("SetJavaScriptEnabled")
+@Suppress("DEPRECATION")
 @Composable
 fun CircleRateWebView(
   onWebViewCreated: (WebView) -> Unit = {},

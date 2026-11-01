@@ -104,7 +104,7 @@
       lblLeaseStampDuty: "पट्टा स्टाम्प शुल्क:",
       lblLeaseStampFormula: "नियमों के अनुसार • गोल ₹10",
       lblLeaseRegistrationFee: "निबंधन शुल्क:",
-      lblLeaseRegFormula: "2% दर • अधिकतम सीमा ₹25,000 • गोल ₹10",
+      lblLeaseRegFormula: "2% दर • अधिकतम सीमा ₹50,000 • गोल ₹10",
       lblLeaseTotal: "कुल पट्टा विलेख प्रभार:",
 
       lblInstitutionalExemption: "विशेष सांविधिक टिप्पणी: सर्किल दर नियम उन आवंटन अथवा पट्टा दरों पर सीधे लागू नहीं होते जो UPFC, आवास विकास परिषद, विकास प्राधिकरण, SIDCUL, DIC या राज्य निगमों द्वारा सीधे निर्धारित की जाती हैं।",
@@ -336,7 +336,7 @@
       lblLeaseStampDuty: "Lease Stamp Duty:",
       lblLeaseStampFormula: "As per rules • Rounded to ₹10",
       lblLeaseRegistrationFee: "Registration Fee:",
-      lblLeaseRegFormula: "2% rate • Maximum limit ₹25,000 • Rounded to ₹10",
+      lblLeaseRegFormula: "2% rate • Maximum limit ₹50,000 • Rounded to ₹10",
       lblLeaseTotal: "Total Lease Deed Charges:",
 
       lblInstitutionalExemption: "Special Statutory Exemption / Remark: Circle rate rules do not apply to allocation/lease rates directly determined by UPFC, Housing Development Council, Development Authority, SIDCUL, DIC, or State Corporations.",
@@ -680,8 +680,8 @@
     const btnAuto = document.getElementById('btnThemeAuto');
     const btnLight = document.getElementById('btnThemeLight');
     const btnDark = document.getElementById('btnThemeDark');
-    const activeClass = "w-full h-11 px-2 rounded-xl border text-xs font-bold transition-all border-emerald-600 bg-emerald-600 text-white shadow-sm shadow-emerald-600/20 flex items-center justify-center leading-tight";
-    const inactiveClass = "w-full h-11 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center leading-tight";
+    const activeClass = "group relative p-3 sm:p-3.5 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer border-emerald-600 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 ring-2 ring-emerald-500/20 shadow-sm";
+    const inactiveClass = "group relative p-3 sm:p-3.5 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-700 dark:text-slate-300";
 
     if (btnAuto) btnAuto.className = (currentThemeMode === 'auto') ? activeClass : inactiveClass;
     if (btnLight) btnLight.className = (currentThemeMode === 'light') ? activeClass : inactiveClass;
@@ -1150,6 +1150,9 @@
     updateDeedTypeUI();
     populateDistrictTehsilFilters();
     populateVillages();
+    if (typeof updateDataTabStats === 'function') {
+      updateDataTabStats();
+    }
     renderLandSegments();
     renderBuildingComponents();
     applyLanguage(currentLang);
@@ -1754,6 +1757,14 @@
       if (typeof renderHistory === 'function') {
         renderHistory();
       }
+    } else if (tab === 'import') {
+      if (typeof updateDataTabStats === 'function') {
+        updateDataTabStats();
+      }
+    } else if (tab === 'settings') {
+      if (typeof setupSettingsUI === 'function') {
+        setupSettingsUI();
+      }
     }
 
     // Retain and restore the previous scroll position of the selected tab
@@ -1766,6 +1777,25 @@
 
   // Android Back Handler Bridge
   window.handleAndroidBack = function() {
+    // 1. Close universal modal if open
+    const univModal = document.getElementById('modalUniversalConfirm');
+    if (univModal && !univModal.classList.contains('hidden')) {
+      if (typeof closeUniversalModal === 'function') closeUniversalModal();
+      return true;
+    }
+    // 2. Close clear modal if open
+    const clearModal = document.getElementById('modalClearConfirm');
+    if (clearModal && !clearModal.classList.contains('hidden')) {
+      if (typeof closeClearModal === 'function') closeClearModal();
+      return true;
+    }
+    // 3. Close settings modal if open
+    const settingsModal = document.getElementById('modalSettingsConfirm');
+    if (settingsModal && !settingsModal.classList.contains('hidden')) {
+      if (typeof closeSettingsModal === 'function') closeSettingsModal();
+      return true;
+    }
+    // 4. If on secondary tab, return to calc tab
     if (currentTab !== 'calc') {
       switchTab('calc');
       return true;
@@ -2438,12 +2468,12 @@
               </span>
             </div>
             <div class="flex items-center space-x-2 shrink-0">
-              <button type="button" onclick="copyLandSegment(${seg.id})" title="${currentLang === 'hi' ? 'समान खंड की प्रतिलिपि बनाएं' : 'Duplicate Segment'}" class="h-8 px-3 text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-lg text-xs font-bold border border-emerald-200 dark:border-emerald-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
+              <button type="button" onclick="copyLandSegment(${seg.id})" title="${currentLang === 'hi' ? 'समान खंड की प्रतिलिपि बनाएं' : 'Duplicate Segment'}" class="min-h-[38px] px-3 py-1.5 text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-xl text-xs font-bold border border-emerald-200 dark:border-emerald-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
                 <span>📋</span>
                 <span>${currentLang === 'hi' ? 'प्रतिलिपि' : 'Copy'}</span>
               </button>
               ${landSegments.length > 1 ? `
-                <button type="button" onclick="removeLandSegment(${seg.id})" class="h-8 px-3 text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-lg text-xs font-bold border border-rose-200 dark:border-rose-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
+                <button type="button" onclick="removeLandSegment(${seg.id})" class="min-h-[38px] px-3 py-1.5 text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-xl text-xs font-bold border border-rose-200 dark:border-rose-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
                   <span>✕</span>
                   <span>${currentLang === 'hi' ? 'हटाएं' : 'Delete'}</span>
                 </button>
@@ -2699,11 +2729,11 @@
               `}
             </div>
             <div class="flex items-center space-x-2 shrink-0">
-              <button type="button" onclick="copyBuildingComponent(${bldg.id})" title="${currentLang === 'hi' ? 'समान तल / मद जोड़ें' : 'Duplicate Floor'}" class="h-8 px-3 text-indigo-700 dark:text-indigo-300 bg-white dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg text-xs font-bold border border-indigo-200 dark:border-indigo-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
+              <button type="button" onclick="copyBuildingComponent(${bldg.id})" title="${currentLang === 'hi' ? 'समान तल / मद जोड़ें' : 'Duplicate Floor'}" class="min-h-[38px] px-3 py-1.5 text-indigo-700 dark:text-indigo-300 bg-white dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-xl text-xs font-bold border border-indigo-200 dark:border-indigo-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
                 <span>📋</span>
                 <span>${currentLang === 'hi' ? 'समान तल' : 'Duplicate'}</span>
               </button>
-              <button type="button" onclick="removeBuildingComponent(${bldg.id})" class="h-8 px-3 text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-lg text-xs font-bold border border-rose-200 dark:border-rose-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
+              <button type="button" onclick="removeBuildingComponent(${bldg.id})" class="min-h-[38px] px-3 py-1.5 text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-xl text-xs font-bold border border-rose-200 dark:border-rose-800 transition-colors flex items-center space-x-1.5 shadow-2xs">
                 <span>✕</span>
                 <span>${currentLang === 'hi' ? 'हटाएं' : 'Delete'}</span>
               </button>
@@ -3450,23 +3480,24 @@
       }
     }
 
-    // Lease Registration Fee (Statutory ceiling: ₹50,000)
+    // Lease Registration Fee (Dynamic statutory ceiling from settings: maxRegFeeCap)
+    const effectiveMaxReg = maxRegFeeCap || 50000;
     if (leaseYears <= 1) {
       const consideration = (leaseAar * leaseYears) + (leaseMode !== 'rent_only' ? leasePremium : 0);
-      leaseReg = Math.min(50000, roundUp10(consideration * 0.02));
-      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 1: अवधि ≤ 1 वर्ष (2% दर • अधिकतम सीमा ₹50,000)` : `Reg Rule 1: Term ≤ 1 yr (2% • Max ₹50,000)`;
+      leaseReg = Math.min(effectiveMaxReg, roundUp10(consideration * 0.02));
+      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 1: अवधि ≤ 1 वर्ष (2% दर • अधिकतम सीमा ₹${formatINR(effectiveMaxReg)})` : `Reg Rule 1: Term ≤ 1 yr (2% • Max ₹${formatINR(effectiveMaxReg)})`;
     } else if (leaseYears <= 20) {
       const consideration = leaseAar + (leaseMode !== 'rent_only' ? leasePremium : 0);
-      leaseReg = Math.min(50000, roundUp10(consideration * 0.02));
-      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 2: अवधि 1-20 वर्ष (1 वर्ष भाड़ा + अग्रिम पर 2% • अधिकतम ₹50,000)` : `Reg Rule 2: Term 1-20 yrs (2% • Max ₹50,000)`;
+      leaseReg = Math.min(effectiveMaxReg, roundUp10(consideration * 0.02));
+      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 2: अवधि 1-20 वर्ष (1 वर्ष भाड़ा + अग्रिम पर 2% • अधिकतम ₹${formatINR(effectiveMaxReg)})` : `Reg Rule 2: Term 1-20 yrs (2% • Max ₹${formatINR(effectiveMaxReg)})`;
     } else if (leaseYears <= 90) {
       const consideration = (3 * leaseAar) + (leaseMode !== 'rent_only' ? leasePremium : 0);
-      leaseReg = Math.min(50000, roundUp10(consideration * 0.02));
-      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 3: अवधि 20-90 वर्ष (3× भाड़ा + अग्रिम पर 2% • अधिकतम ₹50,000)` : `Reg Rule 3: Term 20-90 yrs (2% • Max ₹50,000)`;
+      leaseReg = Math.min(effectiveMaxReg, roundUp10(consideration * 0.02));
+      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 3: अवधि 20-90 वर्ष (3× भाड़ा + अग्रिम पर 2% • अधिकतम ₹${formatINR(effectiveMaxReg)})` : `Reg Rule 3: Term 20-90 yrs (2% • Max ₹${formatINR(effectiveMaxReg)})`;
     } else {
       const consideration = (10 * leaseAar) + (leaseMode !== 'rent_only' ? leasePremium : 0);
-      leaseReg = Math.min(50000, roundUp10(consideration * 0.02));
-      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 4: अवधि > 90 वर्ष / शाश्वत (10× भाड़ा + अग्रिम पर 2% • अधिकतम ₹50,000)` : `Reg Rule 4: Term > 90 yrs (2% • Max ₹50,000)`;
+      leaseReg = Math.min(effectiveMaxReg, roundUp10(consideration * 0.02));
+      leaseRegRuleText = currentLang === 'hi' ? `निबंधन नियम 4: अवधि > 90 वर्ष / शाश्वत (10× भाड़ा + अग्रिम पर 2% • अधिकतम ₹${formatINR(effectiveMaxReg)})` : `Reg Rule 4: Term > 90 yrs (2% • Max ₹${formatINR(effectiveMaxReg)})`;
     }
 
     const leaseTotal = leaseStamp + leaseReg;
@@ -3485,7 +3516,7 @@
     const elLeaseAppRule = document.getElementById('lblLeaseAppliedRule');
     if (elLeaseAppRule) elLeaseAppRule.innerText = currentLang === 'hi' ? `${leaseYears} वर्ष पट्टा • ${leaseStampRuleText}` : `${leaseYears} Year Lease • ${leaseStampRuleText}`;
     const bLeaseRate = document.getElementById('badgeLeaseAppliedRate');
-    if (bLeaseRate) bLeaseRate.innerText = (leaseYears > 30 ? "5% Market" : "2% Rent") + " + Reg (Max 50k)";
+    if (bLeaseRate) bLeaseRate.innerText = (leaseYears > 30 ? "5% Market" : "2% Rent") + ` + Reg (Max ${Math.round(effectiveMaxReg/1000)}k)`;
 
     // ========================================================
     // 6. Dynamic Hero Total Payable Banner
@@ -3918,18 +3949,22 @@
     if (!container) return;
 
     const toast = document.createElement('div');
-    const isError = (type === 'error' || type === 'warning');
-    const bgClass = isError
-      ? 'bg-amber-900/95 border-amber-500 text-amber-100'
-      : 'bg-slate-900/95 border-teal-500 text-white';
+    let bgClass = 'bg-slate-900/95 border-emerald-500/80 text-white shadow-emerald-950/30';
+    let iconSvg = `<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
 
-    toast.className = `${bgClass} backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border text-xs font-bold pointer-events-auto flex items-center space-x-2 transition-all duration-300 transform -translate-y-2 opacity-0`;
+    if (type === 'error') {
+      bgClass = 'bg-rose-950/95 border-rose-500/80 text-rose-100 shadow-rose-950/30';
+      iconSvg = `<svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+    } else if (type === 'warning') {
+      bgClass = 'bg-amber-950/95 border-amber-500/80 text-amber-100 shadow-amber-950/30';
+      iconSvg = `<svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+    } else if (type === 'info') {
+      bgClass = 'bg-slate-900/95 border-blue-500/80 text-blue-100 shadow-blue-950/30';
+      iconSvg = `<svg class="w-4 h-4 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+    }
 
-    const iconSvg = isError
-      ? `<svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`
-      : `<svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
-
-    toast.innerHTML = `${iconSvg}<span>${message}</span>`;
+    toast.className = `${bgClass} backdrop-blur-xl px-4 py-3 rounded-2xl shadow-2xl border text-xs sm:text-sm font-bold pointer-events-auto flex items-center space-x-2.5 transition-all duration-300 transform -translate-y-2 opacity-0 max-w-md w-auto`;
+    toast.innerHTML = `${iconSvg}<span class="leading-snug">${message}</span>`;
     container.appendChild(toast);
 
     requestAnimationFrame(() => {
@@ -3937,14 +3972,133 @@
       toast.classList.add('translate-y-0', 'opacity-100');
     });
 
+    const duration = (type === 'error' || type === 'warning') ? 3500 : 2600;
     setTimeout(() => {
       toast.classList.add('opacity-0', '-translate-y-2');
       setTimeout(() => {
         if (toast.parentNode) toast.parentNode.removeChild(toast);
       }, 300);
-    }, 2800);
+    }, duration);
   }
   window.showToast = showToast;
+
+  // Universal Modern Confirmation Dialog Engine
+  let universalModalCallback = null;
+  let universalCancelCallback = null;
+
+  function showUniversalModal({
+    title = "पुष्टि करें",
+    subtitle = "कार्रवाई जारी रखने हेतु पुष्टि आवश्यक",
+    message = "",
+    iconType = "warning",
+    confirmText = "हाँ, जारी रखें",
+    cancelText = "रद्द करें",
+    onConfirm = null,
+    onCancel = null,
+    previewItems = []
+  }) {
+    const modal = document.getElementById('modalUniversalConfirm');
+    if (!modal) {
+      if (typeof onConfirm === 'function') onConfirm();
+      return;
+    }
+
+    const iconContainer = document.getElementById('modalUniversalIconContainer');
+    const titleEl = document.getElementById('modalUniversalTitle');
+    const subEl = document.getElementById('modalUniversalSub');
+    const msgEl = document.getElementById('modalUniversalMessage');
+    const detailsBox = document.getElementById('modalUniversalDetailsBox');
+    const btnConfirm = document.getElementById('btnUniversalConfirm');
+    const btnCancel = document.getElementById('btnUniversalCancel');
+
+    universalModalCallback = onConfirm;
+    universalCancelCallback = onCancel;
+
+    if (titleEl) titleEl.innerText = title;
+    if (subEl) subEl.innerText = subtitle;
+
+    if (iconContainer) {
+      if (iconType === 'danger') {
+        iconContainer.className = "w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 shadow-xs";
+        iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
+      } else if (iconType === 'success') {
+        iconContainer.className = "w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs";
+        iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (iconType === 'info') {
+        iconContainer.className = "w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950/60 border border-blue-300 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 shadow-xs";
+        iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else {
+        iconContainer.className = "w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-xs";
+        iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+      }
+    }
+
+    if (msgEl) {
+      const msgClass = (iconType === 'danger')
+        ? 'p-4 rounded-2xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 text-rose-950 dark:text-rose-200'
+        : (iconType === 'info')
+          ? 'p-4 rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/70 dark:bg-blue-950/30 text-blue-950 dark:text-blue-200'
+          : (iconType === 'success')
+            ? 'p-4 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200'
+            : 'p-4 rounded-2xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 text-amber-950 dark:text-amber-200';
+      msgEl.className = msgClass + ' text-xs sm:text-sm leading-relaxed';
+      msgEl.innerHTML = message;
+    }
+
+    if (detailsBox) {
+      if (Array.isArray(previewItems) && previewItems.length > 0) {
+        detailsBox.classList.remove('hidden');
+        detailsBox.innerHTML = previewItems.map(item => `
+          <div class="flex items-center justify-between text-xs py-1 border-b border-slate-200/60 dark:border-slate-700/60 last:border-none">
+            <span class="text-slate-500 dark:text-slate-400 font-medium">${item.label}:</span>
+            <span class="font-extrabold text-slate-900 dark:text-white font-sans">${item.value}</span>
+          </div>
+        `).join('');
+      } else {
+        detailsBox.classList.add('hidden');
+        detailsBox.innerHTML = '';
+      }
+    }
+
+    if (btnConfirm) {
+      btnConfirm.innerText = confirmText;
+      const confirmColor = (iconType === 'danger')
+        ? 'bg-rose-600 hover:bg-rose-700 active:bg-rose-800'
+        : (iconType === 'info')
+          ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
+          : 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800';
+      btnConfirm.className = `flex-1 min-h-[48px] py-3 px-5 ${confirmColor} text-white font-black text-xs sm:text-sm rounded-2xl shadow-sm transition-all flex items-center justify-center cursor-pointer`;
+      btnConfirm.onclick = function() {
+        closeUniversalModal();
+        if (typeof universalModalCallback === 'function') {
+          universalModalCallback();
+        }
+      };
+    }
+
+    if (btnCancel) {
+      btnCancel.innerText = cancelText;
+      btnCancel.onclick = function() {
+        closeUniversalModal();
+        if (typeof universalCancelCallback === 'function') {
+          universalCancelCallback();
+        }
+      };
+    }
+
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  }
+  window.showUniversalModal = showUniversalModal;
+
+  function closeUniversalModal() {
+    const modal = document.getElementById('modalUniversalConfirm');
+    if (modal) modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    universalModalCallback = null;
+    universalCancelCallback = null;
+  }
+  window.closeUniversalModal = closeUniversalModal;
 
   function updateHistoryBadge() {
     const badge = document.getElementById('badgeNavHistory');
@@ -4640,23 +4794,59 @@
   }
   window.confirmClearValuationAction = confirmClearValuationAction;
 
+  let historySearchQuery = "";
+  function filterHistoryList(query) {
+    historySearchQuery = (query || "").trim().toLowerCase();
+    const clearBtn = document.getElementById('btnClearHistorySearch');
+    if (clearBtn) {
+      if (historySearchQuery) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+    }
+    renderHistory();
+  }
+  window.filterHistoryList = filterHistoryList;
+
+  function clearHistorySearch() {
+    const input = document.getElementById('historySearchInput');
+    if (input) input.value = "";
+    filterHistoryList("");
+  }
+  window.clearHistorySearch = clearHistorySearch;
+
   function deleteHistoryEntry(index) {
     try {
-      const confirmMsg = currentLang === 'hi'
-        ? 'क्या आप यह प्रविष्टि इतिहास से हटाना चाहते हैं?'
-        : 'Do you want to delete this valuation entry from history?';
-      if (!confirm(confirmMsg)) return;
-
       const saved = localStorage.getItem('circle_rate_history');
       if (!saved) return;
       let list = JSON.parse(saved);
-      if (!Array.isArray(list)) return;
+      if (!Array.isArray(list) || !list[index]) return;
 
-      list.splice(index, 1);
-      localStorage.setItem('circle_rate_history', JSON.stringify(list));
-      updateHistoryBadge();
-      renderHistory();
-      showToast(currentLang === 'hi' ? 'प्रविष्टि हटा दी गई' : 'Entry removed from history', 'info');
+      const item = list[index];
+      const vName = currentLang === 'hi'
+        ? (item.villageName || 'अनिर्दिष्ट ग्राम')
+        : (item.villageNameEng || item.villageName || 'Unspecified Village');
+
+      showUniversalModal({
+        title: currentLang === 'hi' ? "प्रविष्टि हटाएं?" : "Delete Entry?",
+        subtitle: currentLang === 'hi' ? "इतिहास प्रविष्टि हटाना" : "Remove valuation entry from history",
+        message: currentLang === 'hi'
+          ? `<p class='font-bold'>क्या आप ${vName} के मूल्यांकन को इतिहास से हटाना चाहते हैं?</p>`
+          : `<p class='font-bold'>Do you want to delete the valuation entry for ${vName} from history?</p>`,
+        iconType: "danger",
+        confirmText: currentLang === 'hi' ? "हाँ, हटाएं" : "Yes, Delete",
+        cancelText: currentLang === 'hi' ? "रद्द करें" : "Cancel",
+        previewItems: [
+          { label: currentLang === 'hi' ? "ग्राम / वार्ड" : "Village", value: vName },
+          { label: currentLang === 'hi' ? "कुल मूल्यांकन" : "Market Value", value: `₹ ${(item.grandTotal || 0).toLocaleString('en-IN')}` },
+          { label: currentLang === 'hi' ? "दिनांक" : "Date", value: item.formattedDate || '-' }
+        ],
+        onConfirm: function() {
+          list.splice(index, 1);
+          localStorage.setItem('circle_rate_history', JSON.stringify(list));
+          updateHistoryBadge();
+          renderHistory();
+          showToast(currentLang === 'hi' ? 'प्रविष्टि हटा दी गई' : 'Entry removed from history', 'info');
+        }
+      });
     } catch (e) {
       console.error('Error deleting history entry:', e);
     }
@@ -4678,6 +4868,11 @@
 
     updateHistoryBadge();
 
+    const countBadge = document.getElementById('historyCountBadge');
+    if (countBadge) {
+      countBadge.innerText = `${historyList.length} ${currentLang === 'hi' ? 'सुरक्षित' : 'Saved'}`;
+    }
+
     if (historyList.length === 0) {
       container.innerHTML = `
         <div class="py-12 px-4 text-center">
@@ -4690,7 +4885,7 @@
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">
             ${currentLang === 'hi' ? 'मूल्यांकन या परिणाम टैब में "इतिहास में सहेजें" बटन दबाकर आप अपने आवश्यक मूल्यांकनों को सुरक्षित रख सकते हैं।' : 'Click the "Save to History" button on the Valuation or Results tab to save specific calculations.'}
           </p>
-          <button type="button" onclick="switchTab('calc')" class="mt-4 inline-flex items-center px-4 py-2.5 bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold rounded-xl shadow-sm transition-all space-x-1.5 border border-teal-600">
+          <button type="button" onclick="switchTab('calc')" class="mt-4 inline-flex items-center px-4 py-2.5 bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold rounded-xl shadow-sm transition-all space-x-1.5 border border-teal-600 cursor-pointer">
             <svg class="w-4 h-4 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
             <span>${currentLang === 'hi' ? 'मूल्यांकन पर जाएँ' : 'Go to Valuation'}</span>
           </button>
@@ -4699,8 +4894,34 @@
       return;
     }
 
+    let filtered = historyList.map((item, originalIndex) => ({ item, originalIndex }));
+    if (historySearchQuery) {
+      filtered = filtered.filter(({ item }) => {
+        const v = (item.villageName || "") + " " + (item.villageNameEng || "");
+        const d = (item.district || "") + " " + (item.tehsil || "");
+        const dt = (item.deedType || "");
+        const f = (item.formattedDate || "");
+        const allText = `${v} ${d} ${dt} ${f}`.toLowerCase();
+        return allText.includes(historySearchQuery);
+      });
+    }
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="py-8 px-4 text-center">
+          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">
+            ${currentLang === 'hi' ? 'खोज के अनुरूप कोई प्रविष्टि नहीं मिली' : 'No matching history entries found'}
+          </p>
+          <button type="button" onclick="clearHistorySearch()" class="mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-bold underline cursor-pointer">
+            ${currentLang === 'hi' ? 'खोज साफ़ करें' : 'Clear search'}
+          </button>
+        </div>
+      `;
+      return;
+    }
+
     let html = '';
-    historyList.forEach((entry, idx) => {
+    filtered.forEach(({ item: entry, originalIndex: idx }) => {
       const vDisplay = currentLang === 'hi'
         ? (entry.villageName || 'अनिर्दिष्ट ग्राम')
         : (entry.villageNameEng || entry.villageName || 'Unspecified Village');
@@ -4737,14 +4958,14 @@
       const roadText = currentLang === 'hi' ? `मार्ग: ${entry.roadWidth || 0} मी०` : `Road: ${entry.roadWidth || 0}m`;
 
       html += `
-        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all shadow-sm">
+        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/70 dark:hover:border-emerald-500/70 transition-all shadow-xs">
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 flex-wrap mb-1">
                 <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-black text-[11px]">
                   #${idx + 1}
                 </span>
-                <span class="font-bold text-sm text-slate-900 dark:text-white truncate">
+                <span class="font-black text-sm sm:text-base text-slate-900 dark:text-white truncate">
                   ${vDisplay}
                 </span>
                 ${deedBadge}
@@ -4757,10 +4978,10 @@
               <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">
                 ${currentLang === 'hi' ? 'कुल मूल्यांकन' : 'Market Value'}
               </span>
-              <span class="text-sm sm:text-base font-black text-emerald-800 dark:text-emerald-400">
+              <span class="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400 font-sans">
                 ₹ ${(entry.grandTotal || 0).toLocaleString('en-IN')}
               </span>
-              <span class="block text-xs font-black text-slate-900 dark:text-white mt-0.5">
+              <span class="block text-xs font-black text-slate-900 dark:text-white mt-0.5 font-sans">
                 ${currentLang === 'hi' ? 'कुल प्रभार' : 'Total Dues'}: ${entry.totalDuesFormatted || ('₹ ' + (entry.totalDues || 0).toLocaleString('en-IN'))}
               </span>
               <span class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
@@ -4775,12 +4996,16 @@
               <span>🏢 ${bldgCount} ${currentLang === 'hi' ? 'निर्माण' : 'Structure(s)'}</span>
               <span>🛣️ ${roadText}</span>
             </div>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="restoreHistoryEntry(${idx})" class="h-9 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5 whitespace-nowrap">
-                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                <span>${currentLang === 'hi' ? 'पुनर्स्थापित करें' : 'Restore'}</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" onclick="restoreHistoryEntry(${idx}, true)" class="h-9 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1 whitespace-nowrap cursor-pointer">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span>${currentLang === 'hi' ? 'परिणाम देखें' : 'View Result'}</span>
               </button>
-              <button type="button" onclick="deleteHistoryEntry(${idx})" title="${currentLang === 'hi' ? 'हटाएँ' : 'Delete'}" class="h-9 w-9 bg-slate-200 hover:bg-rose-100 dark:bg-slate-700 dark:hover:bg-rose-950 text-slate-600 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center shrink-0">
+              <button type="button" onclick="restoreHistoryEntry(${idx}, false)" title="${currentLang === 'hi' ? 'मूल्यांकन में लोड करें' : 'Edit in Calculator'}" class="h-9 px-2.5 bg-slate-200/90 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1 whitespace-nowrap cursor-pointer">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span>${currentLang === 'hi' ? 'संशोधन' : 'Edit'}</span>
+              </button>
+              <button type="button" onclick="deleteHistoryEntry(${idx})" title="${currentLang === 'hi' ? 'हटाएँ' : 'Delete'}" class="h-9 w-9 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center shrink-0 cursor-pointer border border-rose-200/60 dark:border-rose-900/40">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               </button>
             </div>
@@ -4793,7 +5018,7 @@
   }
   window.renderHistory = renderHistory;
 
-  function restoreHistoryEntry(index) {
+  function restoreHistoryEntry(index, andViewResult = false) {
     try {
       const saved = localStorage.getItem('circle_rate_history');
       if (!saved) return;
@@ -4903,30 +5128,49 @@
 
       // 9. Save updated state and navigate user to 'calc' tab with smooth feedback
       saveFormState();
-      switchTab('calc', true);
+      if (andViewResult) {
+        switchTab('result', true);
+      } else {
+        switchTab('calc', true);
+      }
 
-      alert(currentLang === 'hi'
+      showToast(currentLang === 'hi'
         ? `इतिहास #${index + 1} (${item.villageName || ''}) के पैरामीटर सफलतापूर्वक पुनर्स्थापित किए गए!`
-        : `History #${index + 1} (${item.villageNameEng || item.villageName || ''}) parameters restored successfully!`);
+        : `History #${index + 1} (${item.villageNameEng || item.villageName || ''}) parameters restored successfully!`, 'success');
     } catch (err) {
       console.error("Error restoring history entry:", err);
-      alert("Error restoring history: " + err.message);
+      showToast("Error restoring history: " + err.message, 'error');
     }
   }
   window.restoreHistoryEntry = restoreHistoryEntry;
 
   function clearValuationHistory() {
-    const confirmMsg = currentLang === 'hi'
-      ? 'क्या आप सभी सुरक्षित मूल्यांकन इतिहास प्रविष्टियाँ हटाना चाहते हैं?'
-      : 'Are you sure you want to clear all saved valuation history entries?';
-    if (confirm(confirmMsg)) {
-      localStorage.removeItem('circle_rate_history');
-      if (typeof updateHistoryBadge === 'function') updateHistoryBadge();
-      renderHistory();
-      if (typeof showToast === 'function') {
+    const saved = localStorage.getItem('circle_rate_history');
+    const list = saved ? JSON.parse(saved) : [];
+    if (!Array.isArray(list) || list.length === 0) {
+      showToast(currentLang === 'hi' ? 'इतिहास सूची पहले से खाली है।' : 'History list is already empty.', 'info');
+      return;
+    }
+
+    showUniversalModal({
+      title: currentLang === 'hi' ? "इतिहास साफ़ करें?" : "Clear History?",
+      subtitle: currentLang === 'hi' ? "सभी सुरक्षित मूल्यांकनों को हटाना" : "Delete all saved valuations",
+      message: currentLang === 'hi'
+        ? "<p class='font-bold'>क्या आप वास्तव में सभी सुरक्षित मूल्यांकन प्रविष्टियों को हटाना चाहते हैं?</p><p class='mt-1 text-slate-600 dark:text-slate-300'>यह कार्रवाई पूर्ववत नहीं की जा सकती है।</p>"
+        : "<p class='font-bold'>Are you sure you want to clear all saved valuation records?</p><p class='mt-1 text-slate-600 dark:text-slate-300'>This action cannot be undone.</p>",
+      iconType: "danger",
+      confirmText: currentLang === 'hi' ? "हाँ, इतिहास साफ़ करें" : "Yes, Clear History",
+      cancelText: currentLang === 'hi' ? "रद्द करें" : "Cancel",
+      previewItems: [
+        { label: currentLang === 'hi' ? "कुल प्रविष्टियाँ" : "Total Entries", value: `${list.length} ${currentLang === 'hi' ? 'मूल्यांकन' : 'records'}` }
+      ],
+      onConfirm: function() {
+        localStorage.removeItem('circle_rate_history');
+        if (typeof updateHistoryBadge === 'function') updateHistoryBadge();
+        renderHistory();
         showToast(currentLang === 'hi' ? 'संपूर्ण इतिहास साफ़ कर दिया गया' : 'All history entries cleared', 'info');
       }
-    }
+    });
   }
   window.clearValuationHistory = clearValuationHistory;
 
@@ -5714,9 +5958,9 @@
           a.click();
           document.body.removeChild(a);
           setTimeout(() => URL.revokeObjectURL(url), 2000);
-          alert(currentLang === 'hi'
-            ? 'क्यूआर कोड प्रमाणीकरण सहित आधिकारिक PDF रिपोर्ट (' + docVerificationId + ') सफलतापूर्वक जनरेट व डाउनलोड हुई!'
-            : 'Official PDF Report with QR verification (' + docVerificationId + ') downloaded successfully!');
+          showToast(currentLang === 'hi'
+            ? 'क्यूआर कोड प्रमाणीकरण सहित आधिकारिक PDF रिपोर्ट (' + docVerificationId + ') सफलतापूर्वक जनरेट हुई!'
+            : 'Official PDF Report with QR verification (' + docVerificationId + ') generated successfully!', 'success');
         }
       } else {
         const mimeType = isJpeg ? 'image/jpeg' : 'image/png';
@@ -5734,9 +5978,9 @@
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          alert(currentLang === 'hi'
+          showToast(currentLang === 'hi'
             ? 'उच्च गुणवत्ता A4 मूल्यांकन पत्रक (' + selectedFormat.toUpperCase() + ') सफलतापूर्वक डाउनलोड हुआ!'
-            : 'Ultra-HD A4 Valuation Slip (' + selectedFormat.toUpperCase() + ') downloaded successfully!');
+            : 'Ultra-HD A4 Valuation Slip (' + selectedFormat.toUpperCase() + ') downloaded successfully!', 'success');
         }
       }
 
@@ -5747,7 +5991,7 @@
       }
     } catch (err) {
       console.error('Export report error: ', err);
-      alert('Error generating valuation report: ' + err.message);
+      showToast('Error generating valuation report: ' + err.message, 'error');
     }
   }
   window.exportValuationReport = exportValuationReport;
@@ -5813,16 +6057,113 @@
   window.drawDirectQRCode = drawDirectQRCode;
 
   // 13. SETTINGS OPERATIONS & CONFIRMATION POPUPS
+  function formatINRWords(amount, lang) {
+    const num = Math.round(Number(amount) || 0);
+    if (num <= 0) return (lang === 'hi') ? 'शून्य रुपये' : 'Zero Rupees';
+    if (num >= 10000000) {
+      const cr = (num / 10000000).toFixed(2).replace(/\.00$/, '');
+      return (lang === 'hi') ? `₹ ${cr} करोड़ (${cr} Crore Rupees)` : `₹ ${cr} Crore (${cr} Crore Rupees)`;
+    }
+    if (num >= 100000) {
+      const lk = (num / 100000).toFixed(2).replace(/\.00$/, '');
+      return (lang === 'hi') ? `₹ ${lk} लाख (${lk} Lakh Rupees)` : `₹ ${lk} Lakh (${lk} Lakh Rupees)`;
+    }
+    if (num >= 1000) {
+      const th = (num / 1000).toFixed(2).replace(/\.00$/, '');
+      return (lang === 'hi') ? `₹ ${th} हज़ार` : `₹ ${th} Thousand`;
+    }
+    return `₹ ${num}`;
+  }
+  window.formatINRWords = formatINRWords;
+
+  function setFemaleCeilingPreset(amount) {
+    const input = document.getElementById('settingFemaleValLimit');
+    if (input) {
+      input.value = amount;
+      updateSettingWordsPreview();
+      input.classList.add('ring-2', 'ring-emerald-500');
+      setTimeout(() => input.classList.remove('ring-2', 'ring-emerald-500'), 500);
+    }
+  }
+  window.setFemaleCeilingPreset = setFemaleCeilingPreset;
+
+  function setMaxRegFeePreset(amount) {
+    const input = document.getElementById('settingMaxRegFee');
+    if (input) {
+      input.value = amount;
+      updateSettingWordsPreview();
+      input.classList.add('ring-2', 'ring-emerald-500');
+      setTimeout(() => input.classList.remove('ring-2', 'ring-emerald-500'), 500);
+    }
+  }
+  window.setMaxRegFeePreset = setMaxRegFeePreset;
+
+  function updateSettingWordsPreview() {
+    const elCeil = document.getElementById('settingFemaleValLimit');
+    const elMax = document.getElementById('settingMaxRegFee');
+    const outCeil = document.getElementById('settingFemaleWords');
+    const outMax = document.getElementById('settingMaxRegWords');
+
+    if (elCeil && outCeil) {
+      const val = parseFloat(elCeil.value) || 0;
+      outCeil.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-semibold font-sans">${formatINR(val)}</span> &bull; ${formatINRWords(val, currentLang)}`;
+    }
+    if (elMax && outMax) {
+      const val = parseFloat(elMax.value) || 0;
+      outMax.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-semibold font-sans">${formatINR(val)}</span> &bull; ${formatINRWords(val, currentLang)}`;
+    }
+  }
+  window.updateSettingWordsPreview = updateSettingWordsPreview;
+
+  function setSettingSortMode(mode) {
+    sortMode = (mode === 'default') ? 'default' : 'auto';
+    const autoRadio = document.querySelector('input[name="settingSortMode"][value="auto"]');
+    const defaultRadio = document.querySelector('input[name="settingSortMode"][value="default"]');
+    if (sortMode === 'default') {
+      if (defaultRadio) defaultRadio.checked = true;
+    } else {
+      if (autoRadio) autoRadio.checked = true;
+    }
+    updateSortCardsUI();
+  }
+  window.setSettingSortMode = setSettingSortMode;
+
+  function updateSortCardsUI() {
+    const cardAuto = document.getElementById('settingSortCard_auto');
+    const cardDefault = document.getElementById('settingSortCard_default');
+    const isDefault = (sortMode === 'default');
+
+    if (cardAuto) {
+      if (!isDefault) {
+        cardAuto.className = "flex items-start space-x-3 p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 dark:bg-emerald-500/10 cursor-pointer transition-all shadow-xs";
+      } else {
+        cardAuto.className = "flex items-start space-x-3 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition-all";
+      }
+    }
+    if (cardDefault) {
+      if (isDefault) {
+        cardDefault.className = "flex items-start space-x-3 p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 dark:bg-emerald-500/10 cursor-pointer transition-all shadow-xs";
+      } else {
+        cardDefault.className = "flex items-start space-x-3 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition-all";
+      }
+    }
+  }
+  window.updateSortCardsUI = updateSortCardsUI;
+
   function setupSettingsUI() {
     if (sortMode !== 'default') sortMode = 'auto';
     const sortRadio = document.querySelector(`input[name="settingSortMode"][value="${sortMode}"]`);
     if (sortRadio) sortRadio.checked = true;
+    updateSortCardsUI();
 
     const elCeiling = document.getElementById('settingFemaleValLimit');
     if (elCeiling) elCeiling.value = femaleValueCeiling;
 
     const elMaxReg = document.getElementById('settingMaxRegFee');
     if (elMaxReg) elMaxReg.value = maxRegFeeCap;
+
+    updateSettingWordsPreview();
+    updateThemeUI();
   }
   window.setupSettingsUI = setupSettingsUI;
 
@@ -5842,9 +6183,9 @@
     const maxRegVal = parseFloat(maxRegInput?.value);
 
     if (isNaN(ceilingVal) || ceilingVal < 0 || isNaN(maxRegVal) || maxRegVal < 0) {
-      alert(currentLang === 'hi'
+      showToast(currentLang === 'hi'
         ? "कृपया महिला छूट सीमा व अधिकतम निबंधन शुल्क हेतु मान्य धनात्मक संख्यात्मक मान दर्ज करें।"
-        : "Please enter valid non-negative numbers for female limit and max registration fee.");
+        : "Please enter valid non-negative numbers for female limit and max registration fee.", 'error');
       return;
     }
 
@@ -6074,28 +6415,69 @@
   }
   window.executeRestoreDefaultSettings = executeRestoreDefaultSettings;
 
-  function resetToOfficialData() {
-    const confirmMsg = currentLang === 'hi'
-      ? "क्या आप आधिकारिक सर्किल दर डेटा पुनः लोड करना चाहते हैं? आयातित कस्टम डेटा रीसेट हो जाएगा।"
-      : "Are you sure you want to reload the official circle rate dataset? Any imported dataset will be reset.";
-    if (!confirm(confirmMsg)) return;
-
-    rawDataset = (typeof unpackCircleRatesData === 'function' && window.CIRCLE_RATES_DATA)
-      ? unpackCircleRatesData(window.CIRCLE_RATES_DATA)
-      : (window.DEFAULT_BAGESHWAR_DATA || []);
-    rawDataset.forEach(item => {
-      if (!item.district) item.district = "Bageshwar";
-      if (!item.tehsil) item.tehsil = "Kapkot";
-    });
-    localStorage.removeItem('circle_rate_active_dataset');
-    populateDistrictTehsilFilters();
-    populateVillages();
-    recalculate();
-    if (typeof showToast === 'function') {
-      showToast(currentLang === 'hi' ? "आधिकारिक डेटासेट सफलतापूर्वक सक्रिय किया गया।" : "Official dataset restored successfully.", "success");
-    } else {
-      alert(currentLang === 'hi' ? "आधिकारिक डेटासेट सफलतापूर्वक सक्रिय किया गया।" : "Official dataset restored successfully.");
+  function updateDataTabStats() {
+    const totalVillages = (Array.isArray(rawDataset)) ? rawDataset.length : 0;
+    const districts = new Set();
+    const tehsils = new Set();
+    if (Array.isArray(rawDataset)) {
+      rawDataset.forEach(d => {
+        if (d.district) districts.add(d.district);
+        if (d.tehsil) tehsils.add(d.tehsil);
+      });
     }
+
+    const countEl = document.getElementById('dataStatCount');
+    if (countEl) countEl.innerText = totalVillages.toLocaleString('en-IN');
+
+    const distEl = document.getElementById('dataStatDistricts');
+    if (distEl) {
+      const distNames = Array.from(districts);
+      distEl.innerText = distNames.length > 0
+        ? `${distNames.length} (${distNames.slice(0, 2).join(', ')}${distNames.length > 2 ? '...' : ''})`
+        : '0';
+    }
+
+    const tehEl = document.getElementById('dataStatTehsils');
+    if (tehEl) tehEl.innerText = `${tehsils.size} ${currentLang === 'hi' ? 'तहसीलें' : 'Tehsils'}`;
+
+    const srcEl = document.getElementById('dataStatSource');
+    if (srcEl) {
+      const hasCustom = Boolean(localStorage.getItem('circle_rate_active_dataset'));
+      if (hasCustom) {
+        srcEl.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">Custom Dataset</span>`;
+      } else {
+        srcEl.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">Uttarakhand Official 2024–25</span>`;
+      }
+    }
+  }
+  window.updateDataTabStats = updateDataTabStats;
+
+  function resetToOfficialData() {
+    showUniversalModal({
+      title: (currentLang === 'hi') ? "आधिकारिक डेटा पुनः लोड करें?" : "Reload Official Dataset?",
+      subtitle: (currentLang === 'hi') ? "आयातित डेटा रीसेट पुष्टि" : "Reset imported data confirmation",
+      message: (currentLang === 'hi')
+        ? "क्या आप आधिकारिक सर्किल दर डेटा पुनः लोड करना चाहते हैं? आयातित कस्टम डेटा रीसेट हो जाएगा और आधिकारिक 2024–25 दरें प्रभावी होंगी।"
+        : "Are you sure you want to reload the official circle rate dataset? Any custom imported data will be reset and official 2024–25 rates will be restored.",
+      confirmText: (currentLang === 'hi') ? "हाँ, पुनः लोड करें" : "Yes, Reload",
+      confirmColor: "emerald",
+      icon: `<svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>`,
+      onConfirm: function() {
+        rawDataset = (typeof unpackCircleRatesData === 'function' && window.CIRCLE_RATES_DATA)
+          ? unpackCircleRatesData(window.CIRCLE_RATES_DATA)
+          : (window.DEFAULT_BAGESHWAR_DATA || []);
+        rawDataset.forEach(item => {
+          if (!item.district) item.district = "Bageshwar";
+          if (!item.tehsil) item.tehsil = "Kapkot";
+        });
+        localStorage.removeItem('circle_rate_active_dataset');
+        populateDistrictTehsilFilters();
+        populateVillages();
+        recalculate();
+        updateDataTabStats();
+        showToast(currentLang === 'hi' ? "आधिकारिक डेटासेट सफलतापूर्वक सक्रिय किया गया।" : "Official dataset restored successfully.", "success");
+      }
+    });
   }
   window.resetToOfficialData = resetToOfficialData;
 
@@ -6110,6 +6492,7 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    showToast(currentLang === 'hi' ? "डेटासेट JSON सफलतापूर्वक डाउनलोड हुआ।" : "Dataset JSON exported successfully.", "info");
   }
   window.exportDataset = exportDataset;
 
@@ -6132,12 +6515,13 @@
             populateDistrictTehsilFilters();
             populateVillages();
             recalculate();
-            alert(currentLang === 'hi' ? `${rawDataset.length} रिकॉर्ड सफलतापूर्वक लोड हुए!` : `Loaded ${rawDataset.length} records!`);
+            updateDataTabStats();
+            showToast(currentLang === 'hi' ? `${rawDataset.length} रिकॉर्ड सफलतापूर्वक लोड हुए!` : `Loaded ${rawDataset.length} records!`, 'success');
           } else {
-            alert(currentLang === 'hi' ? "अमान्य JSON प्रारूप।" : "Invalid JSON format.");
+            showToast(currentLang === 'hi' ? "अमान्य JSON प्रारूप।" : "Invalid JSON format.", 'error');
           }
         } catch(err) {
-          alert("Error: " + err.message);
+          showToast("Error: " + err.message, 'error');
         }
       };
       reader.readAsText(file);
@@ -6169,10 +6553,11 @@
             populateDistrictTehsilFilters();
             populateVillages();
             recalculate();
-            alert(currentLang === 'hi' ? `एक्सेल से ${rawDataset.length} रिकॉर्ड लोड हुए!` : `Imported ${rawDataset.length} records from Excel!`);
+            updateDataTabStats();
+            showToast(currentLang === 'hi' ? `एक्सेल से ${rawDataset.length} रिकॉर्ड लोड हुए!` : `Imported ${rawDataset.length} records from Excel!`, 'success');
           }
         } catch(err) {
-          alert("Excel parsing error: " + err.message);
+          showToast("Excel parsing error: " + err.message, 'error');
         }
       };
       reader.readAsArrayBuffer(file);
